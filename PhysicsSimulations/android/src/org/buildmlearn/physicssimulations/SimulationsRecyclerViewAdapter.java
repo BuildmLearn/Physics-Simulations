@@ -4,9 +4,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.buildmlearn.physicssimulations.SimulationsFragment.OnSimulationListener;
+import org.buildmlearn.physicssimulations.utils.Constants;
+
 import java.util.List;
 
 public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<SimulationsRecyclerViewAdapter.ViewHolder> {
@@ -31,15 +34,6 @@ public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<Simulat
         holder.simulation = simulationList.get(position);
         holder.nameView.setText(simulationList.get(position).name);
         holder.detailsView.setText(simulationList.get(position).details);
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != simulationListener) {
-                    simulationListener.onSimulationInteraction(holder.simulation);
-                }
-            }
-        });
     }
 
     @Override
@@ -47,8 +41,10 @@ public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<Simulat
         return simulationList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public final View mView;
+        public final Button simButton;
+        public final Button testButton;
         public final TextView nameView;
         public final TextView detailsView;
         public Simulation simulation;
@@ -56,8 +52,29 @@ public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<Simulat
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            nameView = (TextView) view.findViewById(R.id.name);
+            nameView    = (TextView) view.findViewById(R.id.name);
             detailsView = (TextView) view.findViewById(R.id.details);
+            simButton   = (Button) view.findViewById(R.id.sim_button);
+            testButton  = (Button) view.findViewById(R.id.test_button);
+
+            mView.setOnClickListener(this);
+            simButton.setOnClickListener(this);
+            testButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.sim_button:
+                    simulationListener.onSimulationInteraction(this.simulation, Constants.TYPE.SIM);
+                    break;
+                case R.id.test_button:
+                    simulationListener.onSimulationInteraction(this.simulation, Constants.TYPE.TEST);
+                    break;
+                default:
+                    simulationListener.onSimulationInteraction(this.simulation, Constants.TYPE.DETAILS);
+                    break;
+            }
         }
 
         @Override

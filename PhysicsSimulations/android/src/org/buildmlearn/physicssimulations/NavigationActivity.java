@@ -40,20 +40,27 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent intent;
         switch (id) {
             case R.id.nav_simulations:
                 if (this instanceof SimulationsActivity)
                     break;
-                Intent intent = new Intent(this, SimulationsActivity.class);
+                intent = new Intent(this, SimulationsActivity.class);
                 startActivity(intent);
+                finish();
                 break;
-            case R.id.nav_slideshow:
+            case R.id.nav_home:
+                if (this instanceof HomeActivity)
+                    break;
+                intent = new Intent(this, HomeActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             case R.id.nav_settings:
                 break;
-            case R.id.nav_share:
+            case R.id.nav_about:
                 break;
-            case R.id.nav_send:
+            case R.id.nav_more:
                 break;
             default:
                 break;

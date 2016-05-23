@@ -12,11 +12,11 @@ public class HomeActivity extends NavigationActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         super.onCreateDrawer();
-        Button button = (Button) findViewById(R.id.button_sim);
+        Button button = (Button) findViewById(R.id.sims_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, AndroidLauncher.class);
+                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
                 startActivity(intent);
             }
         });

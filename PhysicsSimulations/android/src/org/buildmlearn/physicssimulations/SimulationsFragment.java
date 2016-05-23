@@ -56,6 +56,6 @@ public class SimulationsFragment extends Fragment {
 
 
     public interface OnSimulationListener {
-        void onSimulationInteraction(Simulation simulation);
+        void onSimulationInteraction(Simulation simulation, Constants.TYPE type);
     }
 }
