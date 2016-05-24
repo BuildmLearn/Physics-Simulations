@@ -1,6 +1,7 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,7 +15,7 @@ public class NavigationActivity extends AppCompatActivity
 
     DrawerLayout drawer;
 
-    protected void onCreateDrawer() {
+    protected void onCreateDrawer(int itemId) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -25,6 +26,7 @@ public class NavigationActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(itemId);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -57,10 +59,24 @@ public class NavigationActivity extends AppCompatActivity
                 finish();
                 break;
             case R.id.nav_settings:
+                if (this instanceof SettingsActivity)
+                    break;
+                intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             case R.id.nav_about:
+                if (this instanceof AboutActivity)
+                    break;
+                intent = new Intent(this, AboutActivity.class);
+                startActivity(intent);
+                finish();
                 break;
             case R.id.nav_more:
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://buildmlearn.org/"));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
                 break;
             default:
                 break;

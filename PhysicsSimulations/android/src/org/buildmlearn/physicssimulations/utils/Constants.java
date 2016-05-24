@@ -8,6 +8,7 @@ import org.buildmlearn.physicssimulations.LightInterference;
 import org.buildmlearn.physicssimulations.LightRefraction;
 import org.buildmlearn.physicssimulations.Pendulum;
 import org.buildmlearn.physicssimulations.Projectile;
+import org.buildmlearn.physicssimulations.R;
 import org.buildmlearn.physicssimulations.Simulation;
 import org.buildmlearn.physicssimulations.SimulationType;
 import org.buildmlearn.physicssimulations.Spring;
@@ -72,4 +73,38 @@ public class Constants {
             return new Wave();
         return null;
     }
+
+    public static int getIcon(String name) {
+        if (name.equals("Atwood"))
+            return R.drawable.pulley;
+        if (name.equals("Circuit Builder"))
+            return R.drawable.battery;
+        if (name.equals("Collision"))
+            return R.drawable.collision;
+        if (name.equals("Lens"))
+            return R.drawable.lens;
+        if (name.equals("Light Interference"))
+            return R.drawable.bulb;
+        if (name.equals("Light Refraction"))
+            return R.drawable.flashlight;
+        if (name.equals("Pendulum"))
+            return R.drawable.pendulum;
+        if (name.equals("Projectile"))
+            return R.drawable.projectile;
+        if (name.equals("Spring"))
+            return R.drawable.spring;
+        if (name.equals("Wave"))
+            return R.drawable.wave;
+        return 0;
+    }
+
+    public static final String TEST_PROBLEM = "Monochromatic yellow light (λ = 594 nm) passes throught " +
+            "two slits with a slit spacing of 0.125 mm and forms an interference pattern on a screen that" +
+            "is positioned 14.5 m away. Determine the distance between the fifth bright spots on opposite " +
+            "sides of the central bright spot.\n";
+    public static final String CORECT_ANSWER = "68.9 cm";
+    public static final String ANSWER_1 = "71.5 cm";
+    public static final String ANSWER_2 = "67.8 cm";
+    public static final String ANSWER_3 = "72.9 cm";
+
 }

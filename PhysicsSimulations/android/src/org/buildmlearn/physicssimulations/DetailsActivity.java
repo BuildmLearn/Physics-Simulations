@@ -3,11 +3,10 @@ package org.buildmlearn.physicssimulations;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toast;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
@@ -24,7 +23,7 @@ public class DetailsActivity extends AppCompatActivity {
         toolbar.setTitle(simName);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton testFab = (FloatingActionButton) findViewById(R.id.test_fab);
+        final FloatingActionButton testFab = (FloatingActionButton) findViewById(R.id.test_fab);
         testFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -34,7 +33,7 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton simFab = (FloatingActionButton) findViewById(R.id.sim_fab);
+        final FloatingActionButton simFab = (FloatingActionButton) findViewById(R.id.sim_fab);
         simFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,4 +45,5 @@ public class DetailsActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
 }

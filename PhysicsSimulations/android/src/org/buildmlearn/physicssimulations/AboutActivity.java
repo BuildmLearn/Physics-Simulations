@@ -1,0 +1,13 @@
+package org.buildmlearn.physicssimulations;
+
+import android.os.Bundle;
+
+public class AboutActivity extends NavigationActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_about);
+        super.onCreateDrawer(R.id.nav_about);
+    }
+}

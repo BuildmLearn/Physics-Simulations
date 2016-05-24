@@ -35,17 +35,25 @@
     <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/nested_scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="org.buildmlearn.physicssimulations.DetailsActivity">
-
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:text="@string/large_text" />
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text="@string/large_text" />
 
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+        </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
@@ -54,7 +62,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/tests"/>
+        android:src="@drawable/tests"
+        app:layout_behavior="org.buildmlearn.physicssimulations.utils.ScrollingFloatingActionButtonBehavior"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/sim_fab"
@@ -62,6 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/drafting_compass" />
+        android:src="@drawable/drafting_compass"
+        app:layout_behavior="org.buildmlearn.physicssimulations.utils.ScrollingFloatingActionButtonBehavior"/>
 
 </android.support.design.widget.CoordinatorLayout>

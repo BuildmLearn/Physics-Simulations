@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.buildmlearn.physicssimulations.SimulationsFragment.OnSimulationListener;
@@ -32,6 +33,7 @@ public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<Simulat
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.simulation = simulationList.get(position);
+        holder.icon.setImageResource(Constants.getIcon(holder.simulation.name));
         holder.nameView.setText(simulationList.get(position).name);
         holder.detailsView.setText(simulationList.get(position).details);
     }
@@ -43,6 +45,7 @@ public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<Simulat
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public final View mView;
+        public final ImageView icon;
         public final Button simButton;
         public final Button testButton;
         public final TextView nameView;
@@ -52,6 +55,7 @@ public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<Simulat
         public ViewHolder(View view) {
             super(view);
             mView = view;
+            icon        = (ImageView) view.findViewById(R.id.icon);
             nameView    = (TextView) view.findViewById(R.id.name);
             detailsView = (TextView) view.findViewById(R.id.details);
             simButton   = (Button) view.findViewById(R.id.sim_button);
