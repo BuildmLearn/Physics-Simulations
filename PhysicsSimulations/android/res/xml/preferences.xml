@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen  xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="tutorial_switch"
+        android:summary="@string/pref_description_tutorial"
+        android:title="@string/pref_title_tutorial" />
+</android.support.v7.preference.PreferenceScreen>

@@ -2,6 +2,7 @@ package org.buildmlearn.physicssimulations;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +19,11 @@ import android.widget.Toast;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
+import java.util.Random;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 public class TestActivity extends AppCompatActivity {
 
     Button answerButton;
@@ -33,17 +39,20 @@ public class TestActivity extends AppCompatActivity {
         toolbar.setTitle(simName);
         setSupportActionBar(toolbar);
 
+        final int idSim = Constants.getId(simName);
+        final int idProblem = (new Random()).nextInt(3);
+
         TextView problemText = (TextView) findViewById(R.id.problem_text);
-        problemText.setText(Constants.TEST_PROBLEM);
+        problemText.setText("\t\t" + Constants.PROBLEMS[idSim][idProblem][Constants.PROBLEM]);
 
         RadioButton radioButtonA = (RadioButton) findViewById(R.id.radio_a);
-        radioButtonA.setText(Constants.ANSWER_1);
+        radioButtonA.setText(Constants.PROBLEMS[idSim][idProblem][Constants.ANSWER_1]);
         RadioButton radioButtonB = (RadioButton) findViewById(R.id.radio_b);
-        radioButtonB.setText(Constants.ANSWER_2);
+        radioButtonB.setText(Constants.PROBLEMS[idSim][idProblem][Constants.ANSWER_2]);
         RadioButton radioButtonC = (RadioButton) findViewById(R.id.radio_c);
-        radioButtonC.setText(Constants.CORECT_ANSWER);
+        radioButtonC.setText(Constants.PROBLEMS[idSim][idProblem][Constants.ANSWER_3]);
         RadioButton radioButtonD = (RadioButton) findViewById(R.id.radio_d);
-        radioButtonD.setText(Constants.ANSWER_3);
+        radioButtonD.setText(Constants.PROBLEMS[idSim][idProblem][Constants.ANSWER_4]);
 
         answerButton = (Button) findViewById(R.id.answer_button);
         answerButton.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +67,7 @@ public class TestActivity extends AppCompatActivity {
                 String yourAnswer = ((RadioButton) findViewById(selectedId))
                         .getText().toString();
 
-                if (yourAnswer.equals(Constants.CORECT_ANSWER)) {
+                if (yourAnswer.equals(Constants.PROBLEMS[idSim][idProblem][Constants.ANSWER_CORRECT])) {
                     new AlertDialog.Builder(TestActivity.this)
                             .setTitle("Correct")
                             .setMessage("Your Answer is Correct\nWell Done!")
@@ -83,7 +92,18 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500);
+        config.setMaskColor(Constants.COLOR_MASK);
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "test");
+        sequence.setConfig(config);
+        sequence.addSequenceItem(problemText,
+                "Read the problem", "GOT IT");
+        sequence.addSequenceItem(radioButtonB,
+                "Select your answer", "OK");
+        sequence.addSequenceItem(answerButton,
+                "Check your answer", "GOT IT");
+        sequence.start();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

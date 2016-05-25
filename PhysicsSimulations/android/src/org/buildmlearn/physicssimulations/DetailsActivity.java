@@ -1,6 +1,9 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
@@ -9,6 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+import uk.co.deanwild.materialshowcaseview.shape.Shape;
+import uk.co.deanwild.materialshowcaseview.target.Target;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -42,6 +50,17 @@ public class DetailsActivity extends AppCompatActivity {
                 startActivity(simIntent);
             }
         });
+
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500);
+        config.setMaskColor(Constants.COLOR_MASK);
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "details");
+        sequence.setConfig(config);
+        sequence.addSequenceItem(testFab,
+                "Here you can check your understanding", "GOT IT");
+        sequence.addSequenceItem(simFab,
+                "This button will take you to the simulation", "OK");
+        sequence.start();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

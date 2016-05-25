@@ -1,6 +1,9 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+import uk.co.deanwild.materialshowcaseview.shape.Shape;
+import uk.co.deanwild.materialshowcaseview.target.Target;
+import uk.co.deanwild.materialshowcaseview.target.ViewTarget;
 
 public class SimulationsFragment extends Fragment {
 
@@ -27,15 +37,36 @@ public class SimulationsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_simulations_list, container, false);
 
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new SimulationsRecyclerViewAdapter(Constants.SIMULATION_LIST, simulationListener));
-        }
+        Context context = view.getContext();
+        final RecyclerView recyclerView = (RecyclerView) view;
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(new SimulationsRecyclerViewAdapter(Constants.SIMULATION_LIST, simulationListener));
+
+        recyclerView.addOnChildAttachStateChangeListener(new RecyclerView.OnChildAttachStateChangeListener() {
+            @Override
+            public void onChildViewAttachedToWindow(View view) {
+                if (recyclerView.getChildCount() == 3) {
+                    ShowcaseConfig config = new ShowcaseConfig();
+                    config.setDelay(500);
+                    config.setMaskColor(Constants.COLOR_MASK);
+                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity(), "list");
+                    sequence.setConfig(config);
+                    sequence.addSequenceItem(recyclerView.getChildAt(2).findViewById(R.id.text_layout),
+                            "Touch here for more details", "OK");
+                    sequence.addSequenceItem(recyclerView.getChildAt(2).findViewById(R.id.test_button),
+                            "You can test yourself", "NEXT");
+                    sequence.addSequenceItem(recyclerView.getChildAt(2).findViewById(R.id.sim_button),
+                            "Or you can play with simulation", "OK");
+                    sequence.start();
+                }
+            }
+
+            @Override
+            public void onChildViewDetachedFromWindow(View view) {}
+        });
+
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -53,7 +84,6 @@ public class SimulationsFragment extends Fragment {
         super.onDetach();
         simulationListener = null;
     }
-
 
     public interface OnSimulationListener {
         void onSimulationInteraction(Simulation simulation, Constants.TYPE type);

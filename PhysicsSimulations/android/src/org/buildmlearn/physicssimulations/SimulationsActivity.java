@@ -1,15 +1,13 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.Toast;
-
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
 public class SimulationsActivity extends NavigationActivity
-        implements SimulationsFragment.OnSimulationListener{
+        implements SimulationsFragment.OnSimulationListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
