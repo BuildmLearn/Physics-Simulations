@@ -54,6 +54,10 @@ public class Constants {
     public static final String SIM_NAME = "sim_name";
     public static final String SIM_DETAILS = "sim_details";
 
+    public static final String TUT_LIST     = "tut_list";
+    public static final String TUT_TEST     = "tut_test";
+    public static final String TUT_DETAILS  = "tut_details";
+
     public static SimulationType getSim(String name) {
         if (name.equals("Atwood"))
             return new Atwood();

@@ -2,6 +2,7 @@ package org.buildmlearn.physicssimulations;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.SyncStateContract;
@@ -9,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
+import java.util.Date;
 import java.util.Random;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
@@ -40,7 +43,7 @@ public class TestActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final int idSim = Constants.getId(simName);
-        final int idProblem = (new Random()).nextInt(3);
+        final int idProblem = (new Random((new Date()).getTime())).nextInt(3);
 
         TextView problemText = (TextView) findViewById(R.id.problem_text);
         problemText.setText("\t\t" + Constants.PROBLEMS[idSim][idProblem][Constants.PROBLEM]);
@@ -92,18 +95,26 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-        ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(500);
-        config.setMaskColor(Constants.COLOR_MASK);
-        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "test");
-        sequence.setConfig(config);
-        sequence.addSequenceItem(problemText,
-                "Read the problem", "GOT IT");
-        sequence.addSequenceItem(radioButtonB,
-                "Select your answer", "OK");
-        sequence.addSequenceItem(answerButton,
-                "Check your answer", "GOT IT");
-        sequence.start();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean showTutorial = sharedPreferences.getBoolean(Constants.TUT_TEST, true);
+        if (showTutorial) {
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(500);
+            config.setMaskColor(Constants.COLOR_MASK);
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this);
+            sequence.setConfig(config);
+            sequence.addSequenceItem(problemText,
+                    "Read the problem", "GOT IT");
+            sequence.addSequenceItem(radioButtonB,
+                    "Select your answer", "OK");
+            sequence.addSequenceItem(answerButton,
+                    "Check your answer", "GOT IT");
+            sequence.start();
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(Constants.TUT_TEST, false);
+            editor.apply();
+        }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

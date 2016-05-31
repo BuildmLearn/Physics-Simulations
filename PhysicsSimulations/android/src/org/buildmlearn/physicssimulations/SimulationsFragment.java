@@ -1,13 +1,16 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import org.buildmlearn.physicssimulations.utils.Constants;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+import uk.co.deanwild.materialshowcaseview.PrefsManager;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 import uk.co.deanwild.materialshowcaseview.shape.Shape;
 import uk.co.deanwild.materialshowcaseview.target.Target;
@@ -46,10 +50,16 @@ public class SimulationsFragment extends Fragment {
             @Override
             public void onChildViewAttachedToWindow(View view) {
                 if (recyclerView.getChildCount() == 3) {
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    boolean showTutorial = sharedPreferences.getBoolean(Constants.TUT_LIST, true);
+
+                    if (!showTutorial)
+                        return;
+
                     ShowcaseConfig config = new ShowcaseConfig();
                     config.setDelay(500);
                     config.setMaskColor(Constants.COLOR_MASK);
-                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity(), "list");
+                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity());
                     sequence.setConfig(config);
                     sequence.addSequenceItem(recyclerView.getChildAt(2).findViewById(R.id.text_layout),
                             "Touch here for more details", "OK");
@@ -58,6 +68,10 @@ public class SimulationsFragment extends Fragment {
                     sequence.addSequenceItem(recyclerView.getChildAt(2).findViewById(R.id.sim_button),
                             "Or you can play with simulation", "OK");
                     sequence.start();
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(Constants.TUT_LIST, false);
+                    editor.apply();
                 }
             }
 

@@ -1,6 +1,7 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -51,16 +53,24 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(500);
-        config.setMaskColor(Constants.COLOR_MASK);
-        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "details");
-        sequence.setConfig(config);
-        sequence.addSequenceItem(testFab,
-                "Here you can check your understanding", "GOT IT");
-        sequence.addSequenceItem(simFab,
-                "This button will take you to the simulation", "OK");
-        sequence.start();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean showTutorial = sharedPreferences.getBoolean(Constants.TUT_DETAILS, true);
+        if (showTutorial) {
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(500);
+            config.setMaskColor(Constants.COLOR_MASK);
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this);
+            sequence.setConfig(config);
+            sequence.addSequenceItem(testFab,
+                    "Here you can check your understanding", "GOT IT");
+            sequence.addSequenceItem(simFab,
+                    "This button will take you to the simulation", "OK");
+            sequence.start();
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(Constants.TUT_DETAILS, false);
+            editor.apply();
+        }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
