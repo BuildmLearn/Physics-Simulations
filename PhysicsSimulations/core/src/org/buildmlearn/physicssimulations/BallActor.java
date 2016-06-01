@@ -23,14 +23,17 @@ public class BallActor extends Actor {
     }
 
     void updateImage() {
-        setPosition(body.getPosition().x, body.getPosition().y);
-        setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-        ballImage.setPosition(body.getPosition().x, body.getPosition().y);
-        ballImage.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+        setPosition(body.getPosition().x - getWidth()/2f,
+                body.getPosition().y - getHeight()/2f);
+        //setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+        ballImage.setPosition(body.getPosition().x - getWidth()/2f,
+                body.getPosition().y - getHeight()/2f);
+        //ballImage.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
     }
 
     void updateBody() {
-        body.setTransform(ballImage.getX(), ballImage.getY(),
+        body.setTransform(ballImage.getX() + getWidth()/2f,
+                ballImage.getY() + getHeight()/2f,
                 ballImage.getRotation() * MathUtils.degreesToRadians);
     }
 
