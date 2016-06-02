@@ -53,6 +53,7 @@ public class Pendulum extends SimulationType {
     World b2world;
 
     Label lengthLabel;
+    Label angleLabel;
     Slider lengthSlider;
     private Texture ballTexture;
 
@@ -101,7 +102,7 @@ public class Pendulum extends SimulationType {
         this.world();
         ballActor.scaleBy(4 / 18f);
 
-        Label angleLabel = new Label("Angle: 30°", skin);
+        angleLabel = new Label("Angle: 30°", skin);
         Label energyLabel = new Label("Energy", skin);
 
         lengthLabel = new Label("Length: 0.5 m", skin);
@@ -117,7 +118,7 @@ public class Pendulum extends SimulationType {
         lengthSlider.setAnimateDuration(0);
         lengthSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("UITest", "slider: " + lengthSlider.getValue());
+                //Gdx.app.log("UITest", "slider: " + lengthSlider.getValue());
                 lengthLabel.setText("Length: "+ (0.5f + lengthSlider.getValue() / 10f) + " m");
             }
         });
@@ -266,6 +267,12 @@ public class Pendulum extends SimulationType {
         //stage.getBatch().setProjectionMatrix(camera.combined);
 
         line3Actor.setHeight(lengthSlider.getValue()*10);
+        //update angle
+        double angle;
+        float op = ballActor.body.getPosition().x - button.getX();
+        float ad = button.getY() - ballActor.body.getPosition().y;
+        angle = Math.toDegrees(Math.atan(op/ad));
+        angleLabel.setText(String.format("Angle: %.2f°", angle));
 
         b2world.step(delta, 8, 3);
 
