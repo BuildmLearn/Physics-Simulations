@@ -15,8 +15,8 @@ public class BallActor extends Actor {
 
     BallActor(TextureRegion textureRegion) {
         this.ballImage = new Image(textureRegion);
-        this.unscaledWidth = ballImage.getWidth();
-        this.unscaledHeight = ballImage.getHeight();
+        this.unscaledWidth = ballImage.getWidth() / 80;
+        this.unscaledHeight = ballImage.getHeight()/ 80;
         setWidth(unscaledWidth);
         setHeight(unscaledHeight);
         setRotation(ballImage.getRotation());
@@ -25,10 +25,10 @@ public class BallActor extends Actor {
     void updateImage() {
         setPosition(body.getPosition().x - getWidth()/2f,
                 body.getPosition().y - getHeight()/2f);
-        //setRotation(body.getAngle() * MathUtils.radiansToDegrees);
         ballImage.setPosition(body.getPosition().x - getWidth()/2f,
                 body.getPosition().y - getHeight()/2f);
-        //ballImage.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+        setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+        ballImage.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
     }
 
     void updateBody() {
@@ -45,7 +45,8 @@ public class BallActor extends Actor {
         float ww = ballImage.getWidth() / 2f;
         float hh = ballImage.getHeight() / 2f;
         moveBy(w - ww, h - hh);
-        updateBody();
+        if (body != null)
+            updateBody();
     }
 
     @Override
@@ -63,5 +64,25 @@ public class BallActor extends Actor {
     public void moveBy(float x, float y) {
         super.moveBy(x, y);
         ballImage.moveBy(x, y);
+    }
+
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x, y);
+        ballImage.setPosition(x, y);
+    }
+
+    @Override
+    public void setWidth(float width) {
+        super.setWidth(width);
+        ballImage.setWidth(width);
+        unscaledWidth = width;
+    }
+
+    @Override
+    public void setHeight(float height) {
+        super.setHeight(height);
+        ballImage.setHeight(height);
+        unscaledHeight = height;
     }
 }
