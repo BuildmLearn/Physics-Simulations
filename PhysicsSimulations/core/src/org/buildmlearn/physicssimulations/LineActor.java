@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public class LineActor extends Actor {
     ShapeRenderer shapeRenderer;
-    LineActor() {
+    LineActor(ShapeRenderer shapeRenderer) {
         super();
-        shapeRenderer = new ShapeRenderer();
+        this.shapeRenderer = shapeRenderer;
     }
 
     @Override

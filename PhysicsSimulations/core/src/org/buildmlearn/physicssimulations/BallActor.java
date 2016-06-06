@@ -15,8 +15,8 @@ public class BallActor extends Actor {
 
     BallActor(TextureRegion textureRegion) {
         this.ballImage = new Image(textureRegion);
-        this.unscaledWidth = ballImage.getWidth() / 80;
-        this.unscaledHeight = ballImage.getHeight()/ 80;
+        this.unscaledWidth = ballImage.getWidth() / 160;
+        this.unscaledHeight = ballImage.getHeight()/ 160;
         setWidth(unscaledWidth);
         setHeight(unscaledHeight);
         setRotation(ballImage.getRotation());
@@ -29,6 +29,8 @@ public class BallActor extends Actor {
                 body.getPosition().y - getHeight()/2f);
         setRotation(body.getAngle() * MathUtils.radiansToDegrees);
         ballImage.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+        setBounds(getX(), getY(), getWidth(), getHeight());
+
     }
 
     void updateBody() {

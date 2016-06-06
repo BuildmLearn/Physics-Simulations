@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
+import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -29,19 +33,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 
 public class Pendulum extends SimulationType {
 
-    //NOU
-    /** the camera **/
     private com.badlogic.gdx.graphics.OrthographicCamera camera;
-    /** box2d debug renderer **/
     private Box2DDebugRenderer debugRenderer;
 
 
+    LineActor line1Actor;
+    LineActor line2Actor;
     LineActor line3Actor;
 
     private Skin skin;
@@ -49,6 +51,7 @@ public class Pendulum extends SimulationType {
 
     private Stage stage;
     Stage stage2;
+    Slider massSlider;
 
     private Table table;
     private BallActor ballActor;
@@ -63,20 +66,25 @@ public class Pendulum extends SimulationType {
 
     RopeJoint ropeJoint;
 
+    ShapeRenderer shapeRenderer;
+    ShapeRenderer shapeRenderer2;
+
     float W;
     float H;
 
     public static final float RATE = 160f;
 
+    double PE;
+    double KE;
+    double TME;
+
     @Override
     public void create() {
 
-        //NOU
-        camera = new OrthographicCamera(4.5f, 8f);
-        camera.position.set(0, 0, 0);
         // next we create the box2d debug renderer
         debugRenderer = new Box2DDebugRenderer();
-
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer2 = new ShapeRenderer();
 
         atlas = new TextureAtlas(Gdx.files.internal("data/ui-blue.atlas"));
 
@@ -84,11 +92,11 @@ public class Pendulum extends SimulationType {
         skin.addRegions(atlas);
 
         stage = new Stage(new ScreenViewport());
-//        camera = (OrthographicCamera) stage.getCamera();
 
 
         W = Gdx.graphics.getWidth();
         H = Gdx.graphics.getHeight();
+        camera = new OrthographicCamera(W / RATE, H / RATE);
 
         ballTexture = new Texture(Gdx.files.internal("ball.png"), true);
         ballTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
@@ -103,19 +111,16 @@ public class Pendulum extends SimulationType {
         });
         ballActor.scaleBy(4 / 18f);
         ballActor.debug();
-
         ballActor.setPosition(0f,2f);
-        //ballActor.setHeight(1f);
-        //ballActor.setWidth(1f);
         this.world();
 
         angleLabel = new Label("Angle: 30°", skin);
         Label energyLabel = new Label("Energy", skin);
 
-        lengthLabel = new Label("Length: 0.5 m", skin);
+        lengthLabel = new Label("Length: 2.0 m", skin);
         lengthLabel.setColor(Color.WHITE);
 
-        final Label massLabel = new Label("Mass: 1.0 kg", skin);
+        final Label massLabel = new Label("Mass: 2.0 kg", skin);
 
         SliderStyle sliderStyle = new SliderStyle();
         sliderStyle.knob = skin.getDrawable("knob_03");
@@ -133,7 +138,7 @@ public class Pendulum extends SimulationType {
             }
         });
 
-        final Slider massSlider = new Slider(2, 18, 1, false, sliderStyle);
+        massSlider = new Slider(2, 18, 1, false, sliderStyle);
         massSlider.setAnimateDuration(0);
         massSlider.setValue(4);
         massSlider.addListener(new ChangeListener() {
@@ -144,13 +149,13 @@ public class Pendulum extends SimulationType {
             }
         });
 
-        LineActor line1Actor = new LineActor();
+        line1Actor = new LineActor(shapeRenderer);
         line1Actor.setColor(Color.RED);
-        LineActor line2Actor = new LineActor();
+        line2Actor = new LineActor(shapeRenderer);
         line2Actor.setColor(Color.BLUE);
-        line3Actor = new LineActor();
+        line3Actor = new LineActor(shapeRenderer);
         line3Actor.setColor(Color.GREEN);
-        LineActor line4Actor = new LineActor();
+        LineActor line4Actor = new LineActor(shapeRenderer);
         line4Actor.setColor(Color.BLACK);
 
         table = new Table();
@@ -170,9 +175,9 @@ public class Pendulum extends SimulationType {
         table.add(angleLabel).padRight(10).align(Align.left);
 
         table.row().padTop(30);
-        table.add(energyLabel);
-        table.add(line1Actor).height(H/4).width(20).align(Align.center|Align.bottom);
-        table.add(line2Actor).height(H/4).width(20).align(Align.center|Align.bottom);
+        table.add(energyLabel).height(200);
+        table.add(line1Actor).width(20).align(Align.center|Align.bottom);
+        table.add(line2Actor).width(20).align(Align.center|Align.bottom);
         table.add(line3Actor).width(20).align(Align.center|Align.bottom);
 
         table.row();
@@ -186,10 +191,8 @@ public class Pendulum extends SimulationType {
         table.add(new Label("TME", skin)).align(Align.center);
 
         stage.addActor(table);
-        //stage.addActor(ballActor);
 
-        stage2 = new Stage();
-        stage2.getViewport().setCamera(camera);
+        stage2 = new Stage(new ScreenViewport(camera));
         stage2.addActor(ballActor);
 
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -220,13 +223,13 @@ public class Pendulum extends SimulationType {
         fixtureDef.shape = polygonShape;
         fixtureDef.density = 200f;
         fixtureDef.restitution = 0.5f;
-        //fixtureDef.friction = 0.5f;
+        fixtureDef.friction = 0.5f;
         body.createFixture(fixtureDef);
         polygonShape.dispose();
 
         //PIN POINT
         BodyDef bodyDef2 = new BodyDef();
-        bodyDef2.position.set(new Vector2(W/4/RATE, H/RATE-0.5f));
+        bodyDef2.position.set(new Vector2(W/4/RATE, H/RATE-0.2f));
         //bodyDef2.position.set(new Vector2(button.getX(), button.getY()));
         //bodyDef2.position.add(button.getX(), button.getY());
         body2 = b2world.createBody(bodyDef2);
@@ -251,11 +254,16 @@ public class Pendulum extends SimulationType {
         ropeJointDef.maxLength = 2f;
 
         ropeJoint = (RopeJoint) b2world.createJoint(ropeJointDef);
+
+        MouseJointDef mouseJointDef = new MouseJointDef();
+        mouseJointDef.bodyB = body;
+        mouseJointDef.bodyA = body2;
+        mouseJointDef.maxForce = 1000;
     }
 
     @Override
     public void resize(int width, int height) {
-        //camera.update();
+        camera.update();
         camera.viewportHeight = H/RATE;
         camera.viewportWidth = W/RATE;
         camera.position.set(camera.viewportWidth / 2,
@@ -274,15 +282,27 @@ public class Pendulum extends SimulationType {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         float delta = Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f);
 
-        debugRenderer.render(b2world, camera.combined);
+        //debugRenderer.render(b2world, camera.combined);
         //stage.getBatch().setProjectionMatrix(camera.combined);
 
-        line3Actor.setHeight(lengthSlider.getValue()*10);
+
+
         //update angle
         double angle;
         float op = ballActor.body.getPosition().x - body2.getPosition().x;
         float ad = body2.getPosition().y - ballActor.body.getPosition().y;
         angle = Math.toDegrees(Math.atan(op/ad));
+        float mass = massSlider.getValue() / 2f;
+        float length = 0.5f + lengthSlider.getValue() / 10f;
+        float g = 9.81f;
+        double freq = Math.sqrt(g/length)/2*Math.PI;
+        TME = mass * g * length;
+        PE = (float)(mass * g * length * (1 - Math.cos(Math.toRadians((angle)))));
+        KE = TME - PE;
+        line1Actor.setHeight((float)KE*5f);
+        line2Actor.setHeight((float)PE*5f);
+        line3Actor.setHeight((float)TME*5f);
+
         angleLabel.setText(String.format("Angle: %.2f°", angle));
 
         b2world.step(delta, 8, 3);
@@ -290,14 +310,25 @@ public class Pendulum extends SimulationType {
         DragListener dragListener = (DragListener) ballActor.getListeners().get(0);
         if (!dragListener.isDragging())
             ballActor.updateImage();
-        else
+        else {
+            Gdx.app.log("CEVA", "DRAGGING");
             ballActor.updateBody();
+        }
+
         stage.act(delta);
         stage.draw();
 
+        shapeRenderer2.setProjectionMatrix(camera.combined);
+        shapeRenderer2.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer2.setColor(Color.BLACK);
+        shapeRenderer2.rectLine(body2.getPosition(), ballActor.body.getPosition(), 0.01f);
+        shapeRenderer2.setColor(Color.BLUE);
+        shapeRenderer2.circle(body2.getPosition().x, body2.getPosition().y, 0.05f, 360);
+        shapeRenderer2.end();
 
         stage2.act(delta);
         stage2.draw();
+
 
     }
 

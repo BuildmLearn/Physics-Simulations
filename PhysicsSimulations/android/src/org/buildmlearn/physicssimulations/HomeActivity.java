@@ -31,7 +31,7 @@ public class HomeActivity extends NavigationActivity {
 //                startActivity(intent);
 //                finish();
                 Intent simIntent = new Intent(HomeActivity.this, SimulationLauncher.class);
-                simIntent.putExtra(Constants.SIM_NAME, "Pendulum");
+                simIntent.putExtra(Constants.SIM_NAME, "Light Refraction");
                 startActivity(simIntent);
             }
         });
