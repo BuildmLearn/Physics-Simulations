@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -18,9 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import java.util.Locale;
 
 public class LightRefraction extends SimulationType{
 
@@ -41,9 +45,17 @@ public class LightRefraction extends SimulationType{
 
     private Image laser;
 
+    private Label firstAngleLabel;
+    private Label secondAngleLabel;
+
+    private Slider firstSlider;
+    private Slider secondSlider;
+
     private Color baseColor = Color.WHITE;
     private Color firstColor = Color.WHITE;
     private Color secondColor = Color.CYAN;
+
+    boolean isPressed = false;
 
     @Override
 	public void create() {
@@ -75,12 +87,20 @@ public class LightRefraction extends SimulationType{
                 }
             }
 		});
-        laser.setOrigin(center.x, laser.getHeight()/2);
+        laser.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                isPressed = !isPressed;
+            }
+        });
+        laser.setOrigin(center.x, laser.getHeight()/2f);
         laser.setPosition(0, H/2f - laser.getHeight()/2f);
+        laser.setRotation(-30f);
         laser.debug();
 
-		Label firstAngleLabel = new Label("Angle of incidence: 30°", skin);
-		Label secondAngleLabel = new Label("Angle of refraction: 30°", skin);
+		firstAngleLabel = new Label("Angle of incidence: 30°", skin);
+		secondAngleLabel = new Label("Angle of refraction: 30°", skin);
 
 		final Label firstIndexLabel = new Label("Index of Refraction: 1.00", skin);
 		firstIndexLabel.setColor(Color.WHITE);
@@ -92,23 +112,23 @@ public class LightRefraction extends SimulationType{
 		sliderStyle.knob = skin.getDrawable("knob_03");
 		sliderStyle.background = skin.getDrawable("slider_back_hor");
 
-		final Slider firstSlider = new Slider(100, 200, 1, false, sliderStyle);
+		firstSlider = new Slider(100, 200, 1, false, sliderStyle);
 		firstSlider.setAnimateDuration(0);
 		firstSlider.setValue(100);
 		firstSlider.addListener(new ChangeListener() {
 			public void changed (ChangeEvent event, Actor actor) {
-                String text = String.format("Index of Refraction: %.2f" , firstSlider.getValue() / 100f);
+                String text = String.format(Locale.US, "Index of Refraction: %.2f" , firstSlider.getValue() / 100f);
 				firstIndexLabel.setText(text);
                 firstColor = baseColor.cpy().lerp(Color.CYAN, (firstSlider.getValue()/100f - 1f) / 1.5f);
         }
 		});
 
-		final Slider secondSlider = new Slider(100, 200, 1, false, sliderStyle);
+		secondSlider = new Slider(100, 200, 1, false, sliderStyle);
 		secondSlider.setAnimateDuration(0);
 		secondSlider.setValue(133);
 		secondSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                String text = String.format("Index of Refraction: %.2f" , secondSlider.getValue() / 100f);
+                String text = String.format(Locale.US, "Index of Refraction: %.2f" , secondSlider.getValue() / 100f);
                 secondIndexLabel.setText(text);
                 secondColor = baseColor.cpy().lerp(Color.CYAN, (secondSlider.getValue()/100f - 1f) / 1.5f);
             }
@@ -196,6 +216,11 @@ public class LightRefraction extends SimulationType{
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        double incidenceAngle = 90 + laser.getRotation();
+        double refractionAngle = Math.toDegrees(Math.asin(Math.sin(Math.toRadians(incidenceAngle))*firstSlider.getValue()/secondSlider.getValue()));
+        firstAngleLabel.setText("Angle of incidence: " + incidenceAngle);
+        secondAngleLabel.setText(String.format(Locale.US, "Angle of refraction: %.1f", refractionAngle));
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(firstColor);
         shapeRenderer.rect(0, H / 2, W, H / 2f);
@@ -208,9 +233,22 @@ public class LightRefraction extends SimulationType{
             shapeRenderer.line(center.x, y, center.x, y-10);
         }
 
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rectLine(laser.getX()+laser.getWidth(),
-                laser.getY()+laser.getHeight()/2f, center.x, center.y, 5);
+        if (isPressed) {
+            shapeRenderer.setColor(Color.RED);
+
+            //incidend ray
+            float aLen = center.x - laser.getX() - laser.getWidth();
+            float ax = (float)(center.x - Math.sin(Math.toRadians(incidenceAngle)) * aLen);
+            float ay = (float)(center.y + Math.cos(Math.toRadians(incidenceAngle)) * aLen);
+            shapeRenderer.rectLine(center.x, center.y, ax, ay, 5);
+
+            //refracted ray
+            float len = W;
+            float x = (float)(center.x + Math.sin(Math.toRadians(refractionAngle)) * len);
+            float y = (float)(center.y - Math.cos(Math.toRadians(refractionAngle)) * len);
+            shapeRenderer.rectLine(center.x, center.y, x, y, 5);
+        }
+
         shapeRenderer.end();
 
 		float delta = Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f);
@@ -223,5 +261,6 @@ public class LightRefraction extends SimulationType{
 		stage.dispose();
 		skin.dispose();
 		atlas.dispose();
+        laserTexture.dispose();
 	}
 }
