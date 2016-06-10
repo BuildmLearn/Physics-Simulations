@@ -2,6 +2,7 @@ package org.buildmlearn.physicssimulations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -39,7 +40,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.Locale;
 
 
-public class Pendulum extends SimulationType {
+public class Pendulum extends SimulationType implements InputProcessor {
 
     private com.badlogic.gdx.graphics.OrthographicCamera camera;
     private Box2DDebugRenderer debugRenderer;
@@ -116,10 +117,10 @@ public class Pendulum extends SimulationType {
         ballActor.setPosition(0f,2f);
         this.world();
 
-        angleLabel = new Label("Angle: 30°", skin);
+        angleLabel = new Label("Angle: 30.0°", skin);
         Label energyLabel = new Label("Energy", skin);
 
-        lengthLabel = new Label("Length: 2.0 m", skin);
+        lengthLabel = new Label("Length: 2.0 m  ", skin);
         lengthLabel.setColor(Color.WHITE);
 
         final Label massLabel = new Label("Mass: 2.0 kg", skin);
@@ -134,7 +135,7 @@ public class Pendulum extends SimulationType {
         lengthSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 float length = (0.5f + lengthSlider.getValue() / 10f);
-                lengthLabel.setText("Length: " + length + " m");
+                lengthLabel.setText("Length: " + length + " m  ");
                 ropeJoint.setMaxLength(length);
             }
         });
@@ -212,6 +213,7 @@ public class Pendulum extends SimulationType {
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(stage);
         inputMultiplexer.addProcessor(stage2);
+        inputMultiplexer.addProcessor(this);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
     }
@@ -308,7 +310,7 @@ public class Pendulum extends SimulationType {
         line2Actor.setHeight((float)PE*5f);
         line3Actor.setHeight((float)TME*5f);
 
-        angleLabel.setText(String.format(Locale.US, "Angle: %.2f°", angle));
+        angleLabel.setText(String.format(Locale.US, "Angle: %+5.1f°", angle));
 
         b2world.step(delta, 8, 3);
 
@@ -341,5 +343,50 @@ public class Pendulum extends SimulationType {
         stage.dispose();
         skin.dispose();
         atlas.dispose();
+    }
+
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Gdx.app.log("PEN", "touchDown " + screenX + " " + screenY);
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        Gdx.app.log("PEN", "touchUp " + screenX + " " + screenY);
+
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        Gdx.app.log("PEN", "touchDragged " + screenX + " " + screenY);
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }

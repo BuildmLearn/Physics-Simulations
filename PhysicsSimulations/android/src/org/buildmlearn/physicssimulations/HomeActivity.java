@@ -27,12 +27,12 @@ public class HomeActivity extends NavigationActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
-//                startActivity(intent);
-//                finish();
-                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncher.class);
-                simIntent.putExtra(Constants.SIM_NAME, "Light Refraction");
-                startActivity(simIntent);
+                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
+                startActivity(intent);
+                finish();
+//                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncher.class);
+//                simIntent.putExtra(Constants.SIM_NAME, "Wave");
+//                startActivity(simIntent);
             }
         });
 

@@ -4,11 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -19,7 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -43,7 +44,7 @@ public class LightRefraction extends SimulationType{
     private float H;
     private Vector2 center;
 
-    private Image laser;
+    private Group laser;
 
     private Label firstAngleLabel;
     private Label secondAngleLabel;
@@ -55,7 +56,7 @@ public class LightRefraction extends SimulationType{
     private Color firstColor = Color.WHITE;
     private Color secondColor = Color.CYAN;
 
-    boolean isPressed = false;
+    boolean isPressed = true;
 
     @Override
 	public void create() {
@@ -77,27 +78,37 @@ public class LightRefraction extends SimulationType{
 		laserTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
 		final TextureRegion laserRegion = new TextureRegion(laserTexture);
 
-        laser = new Image(laserRegion);
-		laser.addListener(new DragListener() {
-			public void drag(InputEvent event, float x, float y, int pointer) {
+        final Image laserImage = new Image(laserRegion);
+
+        final Button button = new Button(skin);
+        button.setColor(Color.GREEN);
+        button.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                isPressed = !isPressed;
+                button.setColor(isPressed ? Color.GREEN : Color.RED);
+            }
+        });
+        button.setWidth(30);
+        button.setHeight(30);
+        button.setPosition(laserImage.getX() + laserImage.getWidth()/2f - button.getWidth()/2f,
+                laserImage.getY() + laserImage.getHeight()/2f - button.getHeight()/2f);
+
+        laser = new Group();
+        laser.addActor(laserImage);
+        laser.addActor(button);
+        laser.setOrigin(center.x, laserImage.getHeight()/2f);
+        laser.setPosition(0, H/2f - laserImage.getHeight()/2f);
+        laser.setRotation(-30f);
+        laser.addListener(new DragListener() {
+            public void drag(InputEvent event, float x, float y, int pointer) {
                 if (y > 0  && laser.getRotation() > -90) {
                     laser.rotateBy(-2);
                 } else if (y <= 0  && laser.getRotation() < 0) {
                     laser.rotateBy(2);
                 }
             }
-		});
-        laser.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                isPressed = !isPressed;
-            }
         });
-        laser.setOrigin(center.x, laser.getHeight()/2f);
-        laser.setPosition(0, H/2f - laser.getHeight()/2f);
-        laser.setRotation(-30f);
-        laser.debug();
 
 		firstAngleLabel = new Label("Angle of incidence: 30°", skin);
 		secondAngleLabel = new Label("Angle of refraction: 30°", skin);
@@ -134,7 +145,11 @@ public class LightRefraction extends SimulationType{
             }
 		});
 
+        BitmapFont font = new BitmapFont(Gdx.files.internal("data/arial_white.fnt"));
+
         final SelectBox firstSelectBox = new SelectBox(skin);
+        firstSelectBox.getStyle().font = font;
+        firstSelectBox.getStyle().listStyle.font = font;
         firstSelectBox.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 switch (firstSelectBox.getSelectedIndex()) {
@@ -180,23 +195,22 @@ public class LightRefraction extends SimulationType{
 		table.setDebug(false);
 		table.center().right().padRight(W/100);
 		table.setFillParent(true);
-		//table.row().expandX();
 
         table.add(firstAngleLabel).align(Align.left);
         table.row().padTop(5);
 		table.add(firstIndexLabel).align(Align.left);
-        table.add(firstSelectBox);
+        table.add(firstSelectBox).padLeft(10);
         table.row().padTop(5);
-		table.add(firstSlider).width(W / 4).colspan(3);
+		table.add(firstSlider).minWidth(W / 4).fillX().colspan(2);
 
 		table.row().padTop(30);
 
         table.add(secondAngleLabel).align(Align.left);
         table.row().padTop(5);
         table.add(secondIndexLabel).align(Align.left);
-        table.add(secondSelectBox);
+        table.add(secondSelectBox).padLeft(10);
         table.row().padTop(5);
-        table.add(secondSlider).width(W / 4).colspan(3);
+        table.add(secondSlider).minWidth(W / 4).fillX().colspan(2);
 
 		stage.addActor(table);
         stage.addActor(laser);

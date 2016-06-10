@@ -1,200 +1,210 @@
 package org.buildmlearn.physicssimulations;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-public class Wave extends SimulationType {
-    Object[] listEntries = {"This is a list entry1", "And another one1", "The meaning of life1", "Is hard to come by1",
-            "This is a list entry2", "And another one2", "The meaning of life2", "Is hard to come by2", "This is a list entry3",
-            "And another one3", "The meaning of life3", "Is hard to come by3", "This is a list entry4", "And another one4",
-            "The meaning of life4", "Is hard to come by4", "This is a list entry5", "And another one5", "The meaning of life5",
-            "Is hard to come by5"};
+import java.util.Locale;
 
-    Skin skin;
-    Stage stage;
-    Texture texture1;
-    Texture texture2;
-    Label fpsLabel;
+public class Wave extends SimulationType{
+
+    private Skin skin;
+    private TextureAtlas atlas;
+
+    private Stage stage;
+
+    private ShapeRenderer shapeRenderer;
+
+    private float W;
+    private float H;
+    private Vector2 center;
+
+    private Label freq;
+    private Label period;
+    private Label speed;
+    private Label length;
+    private Label amplitude;
+
+    private Slider freqSlider;
+    private Slider speedSlider;
+    private Slider amplitudeSlider;
+
+    private Table slidersTable;
+    private Table labelsTable;
 
     @Override
-    public void create () {
+    public void create() {
+
+        shapeRenderer = new ShapeRenderer();
+
+        atlas = new TextureAtlas(Gdx.files.internal("data/ui-blue.atlas"));
+
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-        texture1 = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
-        texture2 = new Texture(Gdx.files.internal("data/badlogic.jpg"));
-        TextureRegion image = new TextureRegion(texture1);
-        TextureRegion imageFlipped = new TextureRegion(image);
-        imageFlipped.flip(true, true);
-        TextureRegion image2 = new TextureRegion(texture2);
-        // stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, new PolygonSpriteBatch());
+        skin.addRegions(atlas);
+
         stage = new Stage(new ScreenViewport());
+
+        W = Gdx.graphics.getWidth();
+        H = Gdx.graphics.getHeight();
+        initialY = 3f*H/4f;
+        center = new Vector2(W/3f, H/2f);
+
+
+        freq = new Label("Frequency: 0.50 Hz", skin);
+        period = new Label("Period: 2.00 s", skin);
+        speed = new Label("Speed: 100.00 cm/s", skin);
+        length = new Label("Length: 200.00 cm", skin);
+        amplitude = new Label("Amplitude: 2.00 cm", skin);
+
+        Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
+        sliderStyle.knob = skin.getDrawable("knob_03");
+        sliderStyle.background = skin.getDrawable("slider_back_hor");
+
+        freqSlider = new Slider(0, 1, 0.01f, false, sliderStyle);
+        freqSlider.setValue(0.50f);
+        freqSlider.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                String text = String.format(Locale.US, "Frequency: %.2f Hz" , freqSlider.getValue());
+                freq.setText(text);
+                text = String.format(Locale.US, "Period: %.2f s" , 1f / freqSlider.getValue());
+                period.setText(text);
+                text = String.format(Locale.US, "Length: %.2f cm" , speedSlider.getValue() / freqSlider.getValue());
+                length.setText(text);
+                init(0);
+            }
+        });
+
+        speedSlider = new Slider(100, 200, 0.1f, false, sliderStyle);
+        speedSlider.setValue(100);
+        speedSlider.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                String text = String.format(Locale.US, "Speed: %.2f cm/s" , speedSlider.getValue());
+                speed.setText(text);
+                text = String.format(Locale.US, "Length: %.2f cm" , speedSlider.getValue() / freqSlider.getValue());
+                length.setText(text);
+                init(0);
+            }
+        });
+
+        amplitudeSlider = new Slider(0.5f, 2.0f, 0.5f, false, sliderStyle);
+        amplitudeSlider.setValue(20);
+        amplitudeSlider.addListener(new ChangeListener() {
+            public void changed (ChangeEvent event, Actor actor) {
+                String text = String.format(Locale.US, "Amplitude: %.2f cm" , amplitudeSlider.getValue());
+                amplitude.setText(text);
+                init(0);
+            }
+        });
+
+
+        labelsTable = new Table();
+        labelsTable.setDebug(false);
+        labelsTable.bottom().left().padLeft(50).padBottom(50);
+        labelsTable.setFillParent(true);
+        labelsTable.add(freq).align(Align.left);
+        labelsTable.add(freqSlider).padLeft(20).width(W/4);
+
+        labelsTable.row().padTop(5);
+        labelsTable.add(period).align(Align.left);
+        labelsTable.row().padTop(5);
+        labelsTable.add(speed).align(Align.left);
+        labelsTable.add(speedSlider).padLeft(20).width(W/4);
+
+        labelsTable.row().padTop(5);
+        labelsTable.add(length).align(Align.left);
+        labelsTable.row().padTop(5);
+        labelsTable.add(amplitude).align(Align.left);
+        labelsTable.add(amplitudeSlider).padLeft(20).width(W/4);
+
+        slidersTable = new Table();
+//        slidersTable.setDebug(false);
+//        slidersTable.bottom().right().padRight(50).padBottom(50);
+//        slidersTable.setFillParent(true);
+//        table.row().expandX();
+//        slidersTable.add(labelsTable);
+//        slidersTable.add(freqSlider).padLeft(50);
+//        slidersTable.add(speedSlider).padLeft(50);
+//        slidersTable.add(amplitudeSlider).padLeft(50);
+
+        stage.addActor(labelsTable);
+        //stage.addActor(slidersTable);
         Gdx.input.setInputProcessor(stage);
 
-        // Group.debug = true;
 
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle(skin.get(Button.ButtonStyle.class));
-        style.imageUp = new TextureRegionDrawable(image);
-        style.imageDown = new TextureRegionDrawable(imageFlipped);
-        ImageButton iconButton = new ImageButton(style);
+        init(0);
+    }
+    int NUM = 720;
 
-        Button buttonMulti = new TextButton("Multi\nLine\nToggle", skin, "toggle");
-        Button imgButton = new Button(new Image(image), skin);
-        Button imgToggleButton = new Button(new Image(image), skin, "toggle");
+    float[] xPoss = new float[NUM];
+    float[] yPoss = new float[NUM];
+    float oscilation = 0.01f * MathUtils.random(0.1f, 2.0f);
+    float initialY;
+    float time = 0;
+    float offsetX = 0;
 
-        Label myLabel = new Label("this is some text.", skin);
-        myLabel.setWrap(true);
-
-        Table t = new Table();
-        t.row();
-        t.add(myLabel);
-
-        t.layout();
-
-        final CheckBox checkBox = new CheckBox(" Continuous rendering", skin);
-        checkBox.setChecked(true);
-        final Slider slider = new Slider(0, 10, 1, false, skin);
-        slider.setAnimateDuration(0.3f);
-        TextField textfield = new TextField("", skin);
-        textfield.setMessageText("Click here!");
-        textfield.setAlignment(Align.center);
-        final SelectBox selectBox = new SelectBox(skin);
-        selectBox.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                System.out.println(selectBox.getSelected());
-            }
-        });
-        selectBox.setItems("Android1", "Windows1 long text in item", "Linux1", "OSX1", "Android2", "Windows2", "Linux2", "OSX2",
-                "Android3", "Windows3", "Linux3", "OSX3", "Android4", "Windows4", "Linux4", "OSX4", "Android5", "Windows5", "Linux5",
-                "OSX5", "Android6", "Windows6", "Linux6", "OSX6", "Android7", "Windows7", "Linux7", "OSX7");
-        selectBox.setSelected("Linux6");
-        Image imageActor = new Image(image2);
-        ScrollPane scrollPane = new ScrollPane(imageActor);
-        List list = new List(skin);
-        list.setItems(listEntries);
-        list.getSelection().setMultiple(true);
-        list.getSelection().setRequired(false);
-        // list.getSelection().setToggle(true);
-        ScrollPane scrollPane2 = new ScrollPane(list, skin);
-        scrollPane2.setFlickScroll(false);
-        SplitPane splitPane = new SplitPane(scrollPane, scrollPane2, false, skin, "default-horizontal");
-        fpsLabel = new Label("fps:", skin);
-
-        // configures an example of a TextField in password mode.
-        final Label passwordLabel = new Label("Textfield in password mode: ", skin);
-        final TextField passwordTextField = new TextField("", skin);
-        passwordTextField.setMessageText("password");
-        passwordTextField.setPasswordCharacter('*');
-        passwordTextField.setPasswordMode(true);
-
-        buttonMulti.addListener(new TextTooltip("This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip!", skin));
-        Table tooltipTable = new Table(skin);
-        tooltipTable.pad(10).background("default-round");
-        tooltipTable.add(new TextButton("Fancy tooltip!", skin));
-        imgButton.addListener(new Tooltip(tooltipTable));
-
-        // window.debug();
-        Window window = new Window("Dialog", skin);
-        window.getTitleTable().add(new TextButton("X", skin)).height(window.getPadTop());
-        window.setPosition(0, 0);
-        window.defaults().spaceBottom(10);
-        window.row().fill().expandX();
-        window.add(iconButton);
-        window.add(buttonMulti);
-        window.add(imgButton);
-        window.add(imgToggleButton);
-        window.row();
-        window.add(checkBox);
-        window.add(slider).minWidth(100).fillX().colspan(3);
-        window.row();
-        window.add(selectBox).maxWidth(100);
-        window.add(textfield).minWidth(100).expandX().fillX().colspan(3);
-        window.row();
-        window.add(splitPane).fill().expand().colspan(4).maxHeight(200);
-        window.row();
-        window.add(passwordLabel).colspan(2);
-        window.add(passwordTextField).minWidth(100).expandX().fillX().colspan(2);
-        window.row();
-        window.add(fpsLabel).colspan(4);
-        window.pack();
-
-        // stage.addActor(new Button("Behind Window", skin));
-        stage.addActor(window);
-
-        textfield.setTextFieldListener(new TextField.TextFieldListener() {
-            public void keyTyped (TextField textField, char key) {
-                if (key == '\n') textField.getOnscreenKeyboard().show(false);
-            }
-        });
-
-        slider.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("UITest", "slider: " + slider.getValue());
-            }
-        });
-
-        iconButton.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                new Dialog("Some Dialog", skin, "dialog") {
-                    protected void result (Object object) {
-                        System.out.println("Chosen: " + object);
-                    }
-                }.text("Are you enjoying this demo?").button("Yes", true).button("No", false).show(stage);
-            }
-        });
-
-        checkBox.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                Gdx.graphics.setContinuousRendering(checkBox.isChecked());
-            }
-        });
+    float PIXEL_TO_CM = 37.795f;
+    void init(float time2) {
+        float delta = 1 / 30f;
+        for (int i = 0; i < NUM; i++) {
+            xPoss[i] = speedSlider.getValue() * time2 + offsetX;
+            yPoss[i] = (PIXEL_TO_CM * amplitudeSlider.getValue())
+                    * MathUtils.sin(freqSlider.getValue()*0.02f * xPoss[i]) + initialY;
+            time2 += delta;
+        }
     }
 
     @Override
-    public void render () {
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+        this.labelsTable.setFillParent(true);
+        this.labelsTable.invalidate();
+        this.slidersTable.setFillParent(true);
+        this.slidersTable.invalidate();
+    }
+
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        fpsLabel.setText("fps: " + Gdx.graphics.getFramesPerSecond());
+        float delta = 1/30f;
 
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        time += delta;
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.GREEN);
+        for (int i = 0; i < NUM; i++) {
+             float xPos = xPoss[i] - time * speedSlider.getValue()*2;
+            shapeRenderer.circle(xPos, yPoss[i], 10);
+
+        }
+        if (xPoss[NUM-1] - time * speedSlider.getValue()*2 < W) {
+            //init(time);
+            time = 0;
+        }
+
+        shapeRenderer.end();
+
+        stage.act(delta);
         stage.draw();
     }
 
     @Override
-    public void resize (int width, int height) {
-        stage.getViewport().update(width, height, true);
-    }
-
-    @Override
-    public void dispose () {
+    public void dispose() {
         stage.dispose();
         skin.dispose();
-        texture1.dispose();
-        texture2.dispose();
+        atlas.dispose();
     }
 }
