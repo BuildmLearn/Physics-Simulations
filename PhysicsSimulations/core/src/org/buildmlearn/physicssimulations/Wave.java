@@ -32,18 +32,17 @@ public class Wave extends SimulationType{
     private float H;
     private Vector2 center;
 
-    private Label freq;
-    private Label period;
-    private Label speed;
-    private Label length;
-    private Label amplitude;
+    private Label freqValue;
+    private Label periodValue;
+    private Label speedValue;
+    private Label lengthValue;
+    private Label amplitudeValue;
 
     private Slider freqSlider;
     private Slider speedSlider;
     private Slider amplitudeSlider;
 
-    private Table slidersTable;
-    private Table labelsTable;
+    private Table table;
 
     @Override
     public void create() {
@@ -62,12 +61,17 @@ public class Wave extends SimulationType{
         initialY = 3f*H/4f;
         center = new Vector2(W/3f, H/2f);
 
+        Label freq = new Label("Frequency:", skin);
+        Label period = new Label("Period:", skin);
+        Label speed = new Label("Speed:", skin);
+        Label length = new Label("Length:", skin);
+        Label amplitude = new Label("Amplitude:", skin);
 
-        freq = new Label("Frequency: 0.50 Hz", skin);
-        period = new Label("Period: 2.00 s", skin);
-        speed = new Label("Speed: 100.00 cm/s", skin);
-        length = new Label("Length: 200.00 cm", skin);
-        amplitude = new Label("Amplitude: 2.00 cm", skin);
+        freqValue = new Label("0.50 Hz", skin);
+        periodValue = new Label("2.00 s", skin);
+        speedValue = new Label("100.00 cm/s", skin);
+        lengthValue = new Label("200.00 cm", skin);
+        amplitudeValue = new Label("2.00 cm", skin);
 
         Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
         sliderStyle.knob = skin.getDrawable("knob_03");
@@ -77,12 +81,12 @@ public class Wave extends SimulationType{
         freqSlider.setValue(0.50f);
         freqSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                String text = String.format(Locale.US, "Frequency: %.2f Hz" , freqSlider.getValue());
-                freq.setText(text);
-                text = String.format(Locale.US, "Period: %.2f s" , 1f / freqSlider.getValue());
-                period.setText(text);
-                text = String.format(Locale.US, "Length: %.2f cm" , speedSlider.getValue() / freqSlider.getValue());
-                length.setText(text);
+                String text = String.format(Locale.US, "%.2f Hz" , freqSlider.getValue());
+                freqValue.setText(text);
+                text = String.format(Locale.US, "%.2f s" , 1f / freqSlider.getValue());
+                periodValue.setText(text);
+                text = String.format(Locale.US, "%.2f cm" , speedSlider.getValue() / freqSlider.getValue());
+                lengthValue.setText(text);
                 init(0);
             }
         });
@@ -91,10 +95,10 @@ public class Wave extends SimulationType{
         speedSlider.setValue(100);
         speedSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                String text = String.format(Locale.US, "Speed: %.2f cm/s" , speedSlider.getValue());
-                speed.setText(text);
-                text = String.format(Locale.US, "Length: %.2f cm" , speedSlider.getValue() / freqSlider.getValue());
-                length.setText(text);
+                String text = String.format(Locale.US, "%.2f cm/s" , speedSlider.getValue());
+                speedValue.setText(text);
+                text = String.format(Locale.US, "%.2f cm" , speedSlider.getValue() / freqSlider.getValue());
+                lengthValue.setText(text);
                 init(0);
             }
         });
@@ -103,43 +107,45 @@ public class Wave extends SimulationType{
         amplitudeSlider.setValue(20);
         amplitudeSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                String text = String.format(Locale.US, "Amplitude: %.2f cm" , amplitudeSlider.getValue());
-                amplitude.setText(text);
+                String text = String.format(Locale.US, "%.2f cm" , amplitudeSlider.getValue());
+                amplitudeValue.setText(text);
                 init(0);
             }
         });
 
 
-        labelsTable = new Table();
-        labelsTable.setDebug(false);
-        labelsTable.bottom().left().padLeft(50).padBottom(50);
-        labelsTable.setFillParent(true);
-        labelsTable.add(freq).align(Align.left);
-        labelsTable.add(freqSlider).padLeft(20).width(W/4);
+        table = new Table();
+        table.setDebug(false);
+        table.bottom().left().padLeft(50).padBottom(50);
+        table.setFillParent(true);
 
-        labelsTable.row().padTop(5);
-        labelsTable.add(period).align(Align.left);
-        labelsTable.row().padTop(5);
-        labelsTable.add(speed).align(Align.left);
-        labelsTable.add(speedSlider).padLeft(20).width(W/4);
+        table.add(freq).align(Align.left);
+        table.add(freqSlider).padLeft(20).width(W/4);
+        table.add(freqValue).padLeft(20).align(Align.left);
 
-        labelsTable.row().padTop(5);
-        labelsTable.add(length).align(Align.left);
-        labelsTable.row().padTop(5);
-        labelsTable.add(amplitude).align(Align.left);
-        labelsTable.add(amplitudeSlider).padLeft(20).width(W/4);
+        table.row().padTop(5);
+        table.add(period).align(Align.left);
+        table.add();
+        table.add(periodValue).padLeft(20).align(Align.left);
 
-        slidersTable = new Table();
-//        slidersTable.setDebug(false);
-//        slidersTable.bottom().right().padRight(50).padBottom(50);
-//        slidersTable.setFillParent(true);
-//        table.row().expandX();
-//        slidersTable.add(labelsTable);
-//        slidersTable.add(freqSlider).padLeft(50);
-//        slidersTable.add(speedSlider).padLeft(50);
-//        slidersTable.add(amplitudeSlider).padLeft(50);
+        table.row().padTop(5);
+        table.add(speed).align(Align.left);
+        table.add(speedSlider).padLeft(20).width(W/4);
+        table.add(speedValue).padLeft(20).align(Align.left);
 
-        stage.addActor(labelsTable);
+
+        table.row().padTop(5);
+        table.add(length).align(Align.left);
+        table.add();
+        table.add(lengthValue).padLeft(20).align(Align.left);
+
+        table.row().padTop(5);
+        table.add(amplitude).align(Align.left);
+        table.add(amplitudeSlider).padLeft(20).width(W/4);
+        table.add(amplitudeValue).padLeft(20).align(Align.left);
+
+
+        stage.addActor(table);
         //stage.addActor(slidersTable);
         Gdx.input.setInputProcessor(stage);
 
@@ -150,7 +156,6 @@ public class Wave extends SimulationType{
 
     float[] xPoss = new float[NUM];
     float[] yPoss = new float[NUM];
-    float oscilation = 0.01f * MathUtils.random(0.1f, 2.0f);
     float initialY;
     float time = 0;
     float offsetX = 0;
@@ -169,10 +174,8 @@ public class Wave extends SimulationType{
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-        this.labelsTable.setFillParent(true);
-        this.labelsTable.invalidate();
-        this.slidersTable.setFillParent(true);
-        this.slidersTable.invalidate();
+        this.table.setFillParent(true);
+        this.table.invalidate();
     }
 
     @Override
