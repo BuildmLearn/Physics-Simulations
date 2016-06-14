@@ -12,7 +12,6 @@ public class BallActor extends Actor {
     float unscaledHeight;
     Image ballImage;
     Body body;
-    boolean isDragging = false;
 
     BallActor(TextureRegion textureRegion) {
         this.ballImage = new Image(textureRegion);
