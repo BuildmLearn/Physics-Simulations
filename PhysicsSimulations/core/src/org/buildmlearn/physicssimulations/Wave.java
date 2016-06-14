@@ -30,7 +30,6 @@ public class Wave extends SimulationType{
 
     private float W;
     private float H;
-    private Vector2 center;
 
     private Label freqValue;
     private Label periodValue;
@@ -59,7 +58,6 @@ public class Wave extends SimulationType{
         W = Gdx.graphics.getWidth();
         H = Gdx.graphics.getHeight();
         initialY = 3f*H/4f;
-        center = new Vector2(W/3f, H/2f);
 
         Label freq = new Label("Frequency:", skin);
         Label period = new Label("Period:", skin);

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -18,11 +19,11 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJoint;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -30,7 +31,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -67,6 +67,7 @@ public class Pendulum extends SimulationType implements InputProcessor {
     Body body2;
 
     RopeJoint ropeJoint;
+    DistanceJoint distanceJoint;
 
     ShapeRenderer shapeRenderer;
     ShapeRenderer shapeRenderer2;
@@ -106,7 +107,7 @@ public class Pendulum extends SimulationType implements InputProcessor {
         ballActor = new BallActor(ballRegion);
         ballActor.scaleBy(4 / 18f);
         ballActor.debug();
-        ballActor.setPosition(0f,2f);
+        ballActor.setPosition(0f, 2f);
         this.world();
 
         Label angleLabel = new Label("Angle:", skin);
@@ -131,6 +132,7 @@ public class Pendulum extends SimulationType implements InputProcessor {
                 float length = (0.5f + lengthSlider.getValue() / 10f);
                 lengthValue.setText(length + " m");
                 ropeJoint.setMaxLength(length);
+                distanceJoint.setLength(length);
             }
         });
 
@@ -232,7 +234,7 @@ public class Pendulum extends SimulationType implements InputProcessor {
 
         //PIN POINT
         BodyDef bodyDef2 = new BodyDef();
-        bodyDef2.position.set(new Vector2(W/4/RATE, H/RATE-0.2f));
+        bodyDef2.position.set(new Vector2(W/4/RATE, H/RATE/2));
         body2 = b2world.createBody(bodyDef2);
         body2.setType(BodyDef.BodyType.KinematicBody);
 
@@ -255,6 +257,16 @@ public class Pendulum extends SimulationType implements InputProcessor {
         ropeJointDef.maxLength = 2f;
         ropeJointDef.collideConnected = false;
         ropeJoint = (RopeJoint) b2world.createJoint(ropeJointDef);
+
+        //ROPE
+        DistanceJointDef distanceJointDef= new DistanceJointDef();
+        distanceJointDef.bodyA = body;
+        distanceJointDef.bodyB = body2;
+        distanceJointDef.localAnchorA.set(0, 0);
+        distanceJointDef.localAnchorB.set(0, 0);
+        distanceJointDef.length = 2f;
+        distanceJointDef.collideConnected = false;
+        distanceJoint = (DistanceJoint) b2world.createJoint(distanceJointDef);
 
     }
 
@@ -341,27 +353,31 @@ public class Pendulum extends SimulationType implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        //Gdx.app.log("PEN", "touchDown " + screenX + " " + screenY);
-
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        //Gdx.app.log("PEN", "touchUp " + screenX + " " + screenY);
         ballActor.isDragging = false;
+        ballActor.body.setActive(true);
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        //Gdx.app.log("PEN", "touchDragged " + screenX + " " + screenY);
         Vector3 v = stage2.getCamera().unproject(new Vector3(screenX, screenY, 0));
-        if (ballActor.getX() <= v.x && v.x <= ballActor.getX()+ballActor.getWidth()) {
-            if (ballActor.getY() <= v.y && v.y <= ballActor.getY()+ballActor.getHeight()) {
+        if (ballActor.getX() <= v.x && v.x <= ballActor.getX()+ballActor.getWidth())
+            if (ballActor.getY() <= v.y && v.y <= ballActor.getY()+ballActor.getHeight())
                 ballActor.isDragging = true;
-                ballActor.setPosition(v.x - ballActor.getWidth() / 2, v.y - ballActor.getHeight() / 2);
-            }
+        if(ballActor.isDragging) {
+            double angle = Math.atan2(v.y - ballActor.body.getPosition().y,
+                    v.x - ballActor.body.getPosition().x);
+            float x = body2.getPosition().x + (float)(ropeJoint.getMaxLength() * Math.cos(angle));
+            float y = body2.getPosition().y + (float)(ropeJoint.getMaxLength() * Math.sin(angle));
+            ballActor.body.setTransform(x, y, 0);
+            ballActor.updateImage();
+            ballActor.body.setActive(false);
+            //ballActor.setPosition(v.x - ballActor.getWidth() / 2, v.y - ballActor.getHeight() / 2);
         }
 
         return false;

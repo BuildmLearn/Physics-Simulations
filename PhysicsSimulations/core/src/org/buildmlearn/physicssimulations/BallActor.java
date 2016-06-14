@@ -26,10 +26,7 @@ public class BallActor extends Actor {
     void updateImage() {
         setPosition(body.getPosition().x - getWidth()/2f,
                 body.getPosition().y - getHeight()/2f);
-        ballImage.setPosition(body.getPosition().x - getWidth()/2f,
-                body.getPosition().y - getHeight()/2f);
         setRotation(body.getAngle() * MathUtils.radiansToDegrees);
-        ballImage.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
         setBounds(getX(), getY(), getWidth(), getHeight());
 
     }
@@ -87,5 +84,23 @@ public class BallActor extends Actor {
         super.setHeight(height);
         ballImage.setHeight(height);
         unscaledHeight = height;
+    }
+
+    @Override
+    public void rotateBy(float amountInDegrees) {
+        super.rotateBy(amountInDegrees);
+        ballImage.rotateBy(amountInDegrees);
+    }
+
+    @Override
+    public void setOrigin(float originX, float originY) {
+        super.setOrigin(originX, originY);
+        ballImage.setOrigin(originX, originY);
+    }
+
+    @Override
+    public void setRotation(float degrees) {
+        super.setRotation(degrees);
+        ballImage.setRotation(degrees);
     }
 }

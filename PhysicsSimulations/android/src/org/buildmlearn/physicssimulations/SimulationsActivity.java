@@ -1,7 +1,6 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
@@ -26,7 +25,7 @@ public class SimulationsActivity extends NavigationActivity
                 startActivity(detailsIntent);
                 break;
             case SIM:
-                Intent simIntent = new Intent(this, SimulationLauncher.class);
+                Intent simIntent = new Intent(this, SimulationLauncherActivity.class);
                 simIntent.putExtra(Constants.SIM_NAME, simulation.name);
                 startActivity(simIntent);
                 break;

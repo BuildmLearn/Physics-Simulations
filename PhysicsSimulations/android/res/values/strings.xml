@@ -115,4 +115,7 @@
 
     <string name="about">\n\n\t\tAs studies indicate, students are more interested to learn the concepts of Physics by actually seeing them in a tangible form in a lab, than studying the concepts in a classroom.\n\n\t\tThis mobile application is targeted at school and university students studying Physics. The application would present various physics simulations to choose from. These simulations will range from basic simulations like spring and pendulum simulation to complex simulations like collisions. Once the user selects a simulation, they will see the simulation animating in real time. The user can also interact with the simulations by providing touch input, dragging objects or changing parameters like gravity, length (of pendulum, string), etc.</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

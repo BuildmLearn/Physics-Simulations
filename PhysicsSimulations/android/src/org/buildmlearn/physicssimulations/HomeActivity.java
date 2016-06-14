@@ -1,20 +1,13 @@
 package org.buildmlearn.physicssimulations;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
-
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
-import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class HomeActivity extends NavigationActivity {
 
@@ -30,7 +23,7 @@ public class HomeActivity extends NavigationActivity {
 //                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
 //                startActivity(intent);
 //                finish();
-                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncher.class);
+                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncherActivity.class);
                 simIntent.putExtra(Constants.SIM_NAME, "Pendulum");
                 startActivity(simIntent);
             }

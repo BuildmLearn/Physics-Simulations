@@ -107,8 +107,8 @@ public class LightRefraction extends SimulationType{
                 } else if (y <= 0  && laser.getRotation() < 0) {
                     laser.rotateBy(2);
                 }
-            }
-        });
+}
+});
 
 		firstAngleLabel = new Label("Angle of incidence: 30°", skin);
 		secondAngleLabel = new Label("Angle of refraction: 30°", skin);
@@ -193,7 +193,7 @@ public class LightRefraction extends SimulationType{
 
 		table = new Table();
 		table.setDebug(false);
-		table.center().right().padRight(W/100);
+		table.center().right().padRight(10);
 		table.setFillParent(true);
 
         table.add(firstAngleLabel).align(Align.left);
@@ -221,6 +221,8 @@ public class LightRefraction extends SimulationType{
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
+        laser.setPosition(0, height/2f - laser.getHeight()/2f);
+        Gdx.app.log("LOG", ""+width+" "+height+" "+H+" "+W);
 		this.table.setFillParent(true);
 		this.table.invalidate();
 	}

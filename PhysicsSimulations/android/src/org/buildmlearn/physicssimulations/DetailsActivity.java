@@ -2,12 +2,8 @@ package org.buildmlearn.physicssimulations;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +13,6 @@ import org.buildmlearn.physicssimulations.utils.Constants;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
-import uk.co.deanwild.materialshowcaseview.shape.Shape;
-import uk.co.deanwild.materialshowcaseview.target.Target;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -47,7 +41,7 @@ public class DetailsActivity extends AppCompatActivity {
         simFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent simIntent = new Intent(DetailsActivity.this, SimulationLauncher.class);
+                Intent simIntent = new Intent(DetailsActivity.this, SimulationLauncherActivity.class);
                 simIntent.putExtra(Constants.SIM_NAME, simName);
                 startActivity(simIntent);
             }
