@@ -23,7 +23,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.Locale;
 
@@ -68,10 +72,12 @@ public class LightRefraction extends SimulationType{
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		skin.addRegions(atlas);
 
-		stage = new Stage(new ScreenViewport());
 
-		W = Gdx.graphics.getWidth();
-		H = Gdx.graphics.getHeight();
+        W = Gdx.graphics.getWidth();
+        H = Gdx.graphics.getHeight();
+        stage = new Stage(new StretchViewport(W, H));
+        //stage = new Stage(new FillViewport(W, H));
+
         center = new Vector2(W/3f, H/2f);
 
         laserTexture = new Texture(Gdx.files.internal("data/laser.png"), true);
@@ -100,15 +106,16 @@ public class LightRefraction extends SimulationType{
         laser.setOrigin(center.x, laserImage.getHeight()/2f);
         laser.setPosition(0, H/2f - laserImage.getHeight()/2f);
         laser.setRotation(-30f);
+        laser.setHeight(laserImage.getHeight());
+
         laser.addListener(new DragListener() {
             public void drag(InputEvent event, float x, float y, int pointer) {
-                if (y > 0  && laser.getRotation() > -90) {
+                if (y > 0 && laser.getRotation() > -90)
                     laser.rotateBy(-2);
-                } else if (y <= 0  && laser.getRotation() < 0) {
+                else if (y <= 0 && laser.getRotation() < 0)
                     laser.rotateBy(2);
-                }
-}
-});
+            }
+        });
 
 		firstAngleLabel = new Label("Angle of incidence: 30°", skin);
 		secondAngleLabel = new Label("Angle of refraction: 30°", skin);
@@ -221,11 +228,9 @@ public class LightRefraction extends SimulationType{
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
-        laser.setPosition(0, height/2f - laser.getHeight()/2f);
-        Gdx.app.log("LOG", ""+width+" "+height+" "+H+" "+W);
 		this.table.setFillParent(true);
 		this.table.invalidate();
-	}
+    }
 
 	@Override
 	public void render() {
@@ -264,7 +269,6 @@ public class LightRefraction extends SimulationType{
             float y = (float)(center.y - Math.cos(Math.toRadians(refractionAngle)) * len);
             shapeRenderer.rectLine(center.x, center.y, x, y, 5);
         }
-
         shapeRenderer.end();
 
 		float delta = Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f);

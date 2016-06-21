@@ -20,12 +20,12 @@ public class HomeActivity extends NavigationActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
-//                startActivity(intent);
-//                finish();
-                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncherActivity.class);
-                simIntent.putExtra(Constants.SIM_NAME, "Pendulum");
-                startActivity(simIntent);
+                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
+                startActivity(intent);
+                finish();
+//                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncherActivity.class);
+//                simIntent.putExtra(Constants.SIM_NAME, "Pendulum");
+//                startActivity(simIntent);
             }
         });
 
@@ -33,31 +33,6 @@ public class HomeActivity extends NavigationActivity {
                 (ShimmerFrameLayout) findViewById(R.id.shimmer_view_container);
         shimmerFrameLayout.setDuration(3000);
         shimmerFrameLayout.startShimmerAnimation();
-
-//        new MaterialShowcaseView.Builder(this)
-//                .setTarget(button)
-//                .setDismissText("GOT IT")
-//                .setContentText("This button will take you to Simulations List")
-//                .setDelay(500)
-//                .setDismissOnTouch(true)
-//                .setDismissOnTargetTouch(true)
-//                .setMaskColour(Color.parseColor("#dd439DBB"))
-//                .singleUse("home")
-//                .show();
-//        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-//
-//        ShowcaseConfig config = new ShowcaseConfig();
-//        config.setDelay(500);
-//        config.setMaskColor(Constants.COLOR_MASK);
-//        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(this, "home");
-//        sequence.setConfig(config);
-//        sequence.addSequenceItem(button,
-//                "This button will take you to Simulations List", "GOT IT");
-//        for (int i = 0; i < toolbar.getChildCount(); i++)
-//            if(toolbar.getChildAt(i) instanceof ImageButton)
-//                sequence.addSequenceItem(toolbar.getChildAt(i),
-//                        "From here you can navigate throw application", "OK");
-//        sequence.start();
     }
 
 }

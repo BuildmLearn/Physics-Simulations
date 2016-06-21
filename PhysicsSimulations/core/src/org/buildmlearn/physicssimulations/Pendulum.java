@@ -179,10 +179,10 @@ public class Pendulum extends SimulationType implements InputProcessor {
         table.add(angleValue).padLeft(10).align(Align.left);
 
         table.row().padTop(30);
-        table.add(energyLabel).height(200);
-        table.add(line1Actor).width(20).align(Align.center|Align.bottom);
-        table.add(line2Actor).width(20).align(Align.center|Align.bottom);
-        table.add(line3Actor).width(20).align(Align.center|Align.bottom);
+        table.add(energyLabel).height(H/4f).maxHeight(H/4f);
+        table.add(line1Actor).width(20).align(Align.center|Align.bottom).maxHeight(H/4f);
+        table.add(line2Actor).width(20).align(Align.center|Align.bottom).maxHeight(H/4f);
+        table.add(line3Actor).width(20).align(Align.center|Align.bottom).maxHeight(H/4f);
 
         table.row();
         table.add();
@@ -235,7 +235,7 @@ public class Pendulum extends SimulationType implements InputProcessor {
 
         //PIN POINT
         BodyDef bodyDef2 = new BodyDef();
-        bodyDef2.position.set(new Vector2(W/4/RATE, H/RATE/2));
+        bodyDef2.position.set(new Vector2(W/4/RATE, H/RATE-0.2f));
         body2 = b2world.createBody(bodyDef2);
         body2.setType(BodyDef.BodyType.StaticBody);
 
@@ -278,6 +278,8 @@ public class Pendulum extends SimulationType implements InputProcessor {
         this.table.invalidate();
     }
 
+    static final float G = 9.81f;
+
     @Override
     public void render() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -294,14 +296,16 @@ public class Pendulum extends SimulationType implements InputProcessor {
         angle = Math.toDegrees(Math.atan(op/ad));
         float mass = massSlider.getValue() / 2f;
         float length = 0.5f + lengthSlider.getValue() / 10f;
-        float g = 9.81f;
-        double freq = Math.sqrt(g/length)/2*Math.PI;
-        TME = g * length; //*mass;
-        PE = (float)(mass * g * length * (1 - Math.cos(Math.toRadians((angle)))));
+        //double freq = Math.sqrt(G/length)/2*Math.PI;
+        TME = G * length * mass;
+        PE = (float)(mass * G * length * (1 - Math.cos(Math.toRadians((angle)))));
         KE = TME - PE;
-//        line1Actor.setHeight((float)KE*5f);
-//        line2Actor.setHeight((float)PE*5f);
-//        line3Actor.setHeight((float)TME*5f);
+
+        float maxTME = 9.0f * G * 2.0f;
+        float r =  H / 4f / maxTME;
+        line1Actor.setHeight((float)KE*r);
+        line2Actor.setHeight((float)PE*r);
+        line3Actor.setHeight((float)TME*r);
 
         angleValue.setText(String.format(Locale.US, "%+5.1f°", angle));
 

@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Locale;
 
-public class Wave extends SimulationType{
+public class Wave extends SimulationType {
 
     private Skin skin;
     private TextureAtlas atlas;
@@ -150,8 +150,7 @@ public class Wave extends SimulationType{
 
         init(0);
     }
-    int NUM = 720;
-
+    int NUM = 1440;
     float[] xPoss = new float[NUM];
     float[] yPoss = new float[NUM];
     float initialY;
@@ -187,9 +186,8 @@ public class Wave extends SimulationType{
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.GREEN);
         for (int i = 0; i < NUM; i++) {
-             float xPos = xPoss[i] - time * speedSlider.getValue()*2;
+            float xPos = xPoss[i] - time * speedSlider.getValue()*2;
             shapeRenderer.circle(xPos, yPoss[i], 10);
-
         }
         if (xPoss[NUM-1] - time * speedSlider.getValue()*2 < W) {
             //init(time);

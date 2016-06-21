@@ -7,10 +7,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.View;
+import android.widget.TextView;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
+import org.w3c.dom.Text;
 
+import io.github.kexanie.library.MathView;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
@@ -26,6 +30,14 @@ public class DetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(simName);
         setSupportActionBar(toolbar);
+
+        final int idSim = Constants.getId(simName);
+
+        MathView mathView = (MathView) findViewById(R.id.math_view);
+        mathView.setText(Constants.DETAILS[idSim]);
+
+//        TextView textView = (TextView) findViewById(R.id.details_text_view);
+//        textView.setText(Html.fromHtml(Constants.DETAILS[idSim]));
 
         final FloatingActionButton testFab = (FloatingActionButton) findViewById(R.id.test_fab);
         testFab.setOnClickListener(new View.OnClickListener() {

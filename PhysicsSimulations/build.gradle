@@ -24,6 +24,7 @@ allprojects {
     }
 
     repositories {
+        jcenter()
         mavenLocal()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -34,10 +35,12 @@ allprojects {
 
 project(":android") {
     apply plugin: "android"
+    apply plugin: 'com.android.application'
 
     configurations { natives }
 
     dependencies {
+
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
@@ -53,15 +56,15 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
 
-
         compile 'com.android.support:appcompat-v7:23.4.0'
         compile 'com.android.support:preference-v7:23.4.0'
         compile 'com.android.support:cardview-v7:23.4.0'
         compile 'com.android.support:recyclerview-v7:23.4.0'
-        compile 'com.android.support:design:23.3.0'
+        compile 'com.android.support:design:23.4.0'
         compile 'com.android.support:support-v4:23.4.0'
         compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
         compile 'com.github.deano2390:MaterialShowcaseView:1.1.0@aar'
+        compile 'io.github.kexanie.library:MathView:0.0.6'
     }
 }
 
