@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -95,6 +96,9 @@ public class Pendulum extends SimulationType implements InputProcessor {
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
         skin.addRegions(atlas);
 
+        BitmapFont font = new BitmapFont(Gdx.files.internal("data/arial_30_bold.fnt"));
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
+
         stage = new Stage(new ScreenViewport());
 
 
@@ -111,10 +115,10 @@ public class Pendulum extends SimulationType implements InputProcessor {
         ballActor.setPosition(0f, 2f);
         this.world();
 
-        Label angleLabel = new Label("Angle:", skin);
-        Label lengthLabel = new Label("Length:", skin);
-        Label massLabel = new Label("Mass:", skin);
-        Label energyLabel = new Label("Energy", skin);
+        Label angleLabel = new Label("Angle:", labelStyle);
+        Label lengthLabel = new Label("Length:", labelStyle);
+        Label massLabel = new Label("Mass:", labelStyle);
+        Label energyLabel = new Label("Energy", labelStyle);
 
         angleValue = new Label("30.0°", skin);
         lengthValue = new Label("2.0 m", skin);
@@ -193,7 +197,7 @@ public class Pendulum extends SimulationType implements InputProcessor {
         table.add(new Label("KE", skin)).align(Align.center);
         table.add(new Label("PE", skin)).align(Align.center);
         table.add(new Label("TME", skin)).align(Align.center);
-
+        //stage.setDebugAll(true);
         stage.addActor(table);
 
         stage2 = new Stage(new FitViewport(W/RATE, H/RATE));

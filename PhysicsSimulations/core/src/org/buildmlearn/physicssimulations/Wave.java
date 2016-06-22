@@ -3,10 +3,10 @@ package org.buildmlearn.physicssimulations;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -59,11 +59,14 @@ public class Wave extends SimulationType {
         H = Gdx.graphics.getHeight();
         initialY = 3f*H/4f;
 
-        Label freq = new Label("Frequency:", skin);
-        Label period = new Label("Period:", skin);
-        Label speed = new Label("Speed:", skin);
-        Label length = new Label("Length:", skin);
-        Label amplitude = new Label("Amplitude:", skin);
+        BitmapFont font = new BitmapFont(Gdx.files.internal("data/arial_30_bold.fnt"));
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
+
+        Label freq = new Label("Frequency:", labelStyle);
+        Label period = new Label("Period:", labelStyle);
+        Label speed = new Label("Speed:", labelStyle);
+        Label length = new Label("Length:", labelStyle);
+        Label amplitude = new Label("Amplitude:", labelStyle);
 
         freqValue = new Label("0.50 Hz", skin);
         periodValue = new Label("2.00 s", skin);
@@ -144,7 +147,6 @@ public class Wave extends SimulationType {
 
 
         stage.addActor(table);
-        //stage.addActor(slidersTable);
         Gdx.input.setInputProcessor(stage);
 
 

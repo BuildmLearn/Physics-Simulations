@@ -72,6 +72,8 @@ public class LightRefraction extends SimulationType{
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		skin.addRegions(atlas);
 
+        BitmapFont labelFont = new BitmapFont(Gdx.files.internal("data/arial_30_bold.fnt"));
+        Label.LabelStyle labelStyle = new Label.LabelStyle(labelFont, Color.BLACK);
 
         W = Gdx.graphics.getWidth();
         H = Gdx.graphics.getHeight();
@@ -117,14 +119,11 @@ public class LightRefraction extends SimulationType{
             }
         });
 
-		firstAngleLabel = new Label("Angle of incidence: 30°", skin);
-		secondAngleLabel = new Label("Angle of refraction: 30°", skin);
+		firstAngleLabel = new Label("Angle of incidence: 30°", labelStyle);
+		secondAngleLabel = new Label("Angle of refraction: 30°", labelStyle);
 
-		final Label firstIndexLabel = new Label("Index of Refraction: 1.00", skin);
-		firstIndexLabel.setColor(Color.WHITE);
-
-		final Label secondIndexLabel = new Label("Index of Refraction: 1.33", skin);
-		secondIndexLabel.setColor(Color.WHITE);
+		final Label firstIndexLabel = new Label("Index of Refraction: 1.00", labelStyle);
+		final Label secondIndexLabel = new Label("Index of Refraction: 1.33", labelStyle);
 
 		Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
 		sliderStyle.knob = skin.getDrawable("knob_03");
