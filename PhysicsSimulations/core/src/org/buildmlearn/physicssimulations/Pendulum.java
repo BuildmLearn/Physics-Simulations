@@ -164,7 +164,7 @@ public class Pendulum extends SimulationType implements InputProcessor {
         table.setDebug(false);
         table.right().bottom().padRight(H/10).padBottom(H/10);
         table.setFillParent(true);
-        //table.row().expandX();
+        //table.row().expandXa();
 
         table.add(lengthLabel).padRight(10).align(Align.left);
         table.add(lengthSlider).width(W / 4).colspan(2);
