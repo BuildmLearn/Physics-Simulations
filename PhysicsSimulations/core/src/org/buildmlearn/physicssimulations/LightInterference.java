@@ -204,6 +204,19 @@ public class LightInterference extends SimulationType {
         shapeRenderer.rect(W-200, H-30, 150, 30);
         shapeRenderer.rect(W-200, 0, 150, H/3);
 
+        shapeRenderer.end();
+
+        //rays
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(color);
+        //shapeRenderer.circle(W/4+40, middle, 30);
+        for (int j = 0; j <= 40; j+=10) {
+            arc(W / 4+3*j, middle, 80+j, 360 - (40+j)/2, 40+j);
+//            arc(W / 4 + 30, middle, 90, 335, 50);
+//            arc(W / 4 + 60, middle, 100, 330, 60);
+//            arc(W / 4 + 90, middle, 110, 325, 70);
+//            arc(W / 4 + 120, middle, 120, 320, 80);
+        }
 
         shapeRenderer.end();
 
@@ -211,6 +224,25 @@ public class LightInterference extends SimulationType {
         stage.draw();
 
         //rayHandler.updateAndRender();
+    }
+
+    void arc(float x, float y, float radius, float start, float degrees) {
+
+        int segments = (int)(20 * (float)Math.cbrt(radius) * (degrees / 360.0f));
+
+        float theta = (2 * MathUtils.PI * (degrees / 360.0f)) / segments;
+        float cos = MathUtils.cos(theta);
+        float sin = MathUtils.sin(theta);
+        float cx = radius * MathUtils.cos(start * MathUtils.degreesToRadians);
+        float cy = radius * MathUtils.sin(start * MathUtils.degreesToRadians);
+
+        for (int i = 0; i < segments; i++) {
+            shapeRenderer.circle(x + cx, y + cy, 10);
+            float temp = cx;
+            cx = cos * cx - sin * cy;
+            cy = sin * temp + cos * cy;
+            shapeRenderer.circle(x + cx, y + cy, 10);
+        }
     }
 
     void setColor() {
