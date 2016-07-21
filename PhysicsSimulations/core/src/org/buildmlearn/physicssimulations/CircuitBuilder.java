@@ -53,6 +53,7 @@ public class CircuitBuilder extends SimulationType {
     private Texture batteryTexture;
     private Texture switchTexture;
     private Texture resistorTexture;
+    private Texture wireTexture;
 
     ShapeRenderer shapeRenderer;
 
@@ -85,6 +86,7 @@ public class CircuitBuilder extends SimulationType {
         Label batteryLabel  = new Label("Battery", labelStyle);
         Label bulbLabel     = new Label("Light Bulb", labelStyle);
         Label resistorLabel = new Label("Resistor", labelStyle);
+        Label wireLabel = new Label("Wire", labelStyle);
 
         final Label inductorValue = new Label("2 H", skin);
         final Label batteryValue = new Label("9 V", skin);
@@ -119,7 +121,7 @@ public class CircuitBuilder extends SimulationType {
         });
 
         inductorTexture = new Texture(Gdx.files.internal("circuit/inductor.png"), true);
-        inductorTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
+//        inductorTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         Texture inductorPressed = new Texture(Gdx.files.internal("circuit/inductor_pressed.png"), true);
         final ImageButton inductorImage = new ImageButton(new TextureRegionDrawable(new TextureRegion(inductorTexture)),
                 new TextureRegionDrawable(new TextureRegion(inductorTexture)), new TextureRegionDrawable(new TextureRegion(inductorPressed)));
@@ -135,7 +137,6 @@ public class CircuitBuilder extends SimulationType {
         selectedTexture = 0;
 
         switchTexture = new Texture(Gdx.files.internal("circuit/switch_off.png"), true);
-        switchTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         Texture switchPressed = new Texture(Gdx.files.internal("circuit/switch_off_pressed.png"), true);
         final ImageButton switchImage = new ImageButton(new TextureRegionDrawable(new TextureRegion(switchTexture)),
                 new TextureRegionDrawable(new TextureRegion(switchTexture)), new TextureRegionDrawable(new TextureRegion(switchPressed)));
@@ -150,7 +151,6 @@ public class CircuitBuilder extends SimulationType {
 
 
         batteryTexture = new Texture(Gdx.files.internal("circuit/battery.png"), true);
-        batteryTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         Texture batteryPressed= new Texture(Gdx.files.internal("circuit/battery_pressed.png"), true);
         final ImageButton batteryImage = new ImageButton(new TextureRegionDrawable(new TextureRegion(batteryTexture)),
                 new TextureRegionDrawable(new TextureRegion(batteryTexture)), new TextureRegionDrawable(new TextureRegion(batteryPressed)));
@@ -164,7 +164,6 @@ public class CircuitBuilder extends SimulationType {
         });
 
         bulbTexture = new Texture(Gdx.files.internal("circuit/bulby.png"), true);
-        bulbTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         Texture bulbPressed = new Texture(Gdx.files.internal("circuit/bulby_pressed.png"), true);
         final ImageButton bulbImage = new ImageButton(new TextureRegionDrawable(new TextureRegion(bulbTexture)),
                 new TextureRegionDrawable(new TextureRegion(bulbTexture)), new TextureRegionDrawable(new TextureRegion(bulbPressed)));
@@ -178,7 +177,6 @@ public class CircuitBuilder extends SimulationType {
         });
 
         resistorTexture = new Texture(Gdx.files.internal("circuit/resistor.png"), true);
-        resistorTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         Texture resistorPressed = new Texture(Gdx.files.internal("circuit/resistor_pressed.png"), true);
         final ImageButton resistorImage = new ImageButton(new TextureRegionDrawable(new TextureRegion(resistorTexture)),
                 new TextureRegionDrawable(new TextureRegion(resistorTexture)), new TextureRegionDrawable(new TextureRegion(resistorPressed)));
@@ -191,14 +189,28 @@ public class CircuitBuilder extends SimulationType {
             }
         });
 
+        wireTexture = new Texture(Gdx.files.internal("circuit/wire.png"), true);
+        Texture wirePressed = new Texture(Gdx.files.internal("circuit/wire_pressed.png"), true);
+        final ImageButton wireImage = new ImageButton(new TextureRegionDrawable(new TextureRegion(wireTexture)),
+                new TextureRegionDrawable(new TextureRegion(wireTexture)), new TextureRegionDrawable(new TextureRegion(wirePressed)));
+        wireImage.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                selectedButton.setChecked(false);
+                selectedButton = wireImage;
+                selectedTexture = 5;
+            }
+        });
+
         Texture inductorRotated= new Texture(Gdx.files.internal("circuit/inductor_rotated.png"), true);
         Texture switchRotated = new Texture(Gdx.files.internal("circuit/switch_off_rotated.png"), true);
         Texture batteryRotated= new Texture(Gdx.files.internal("circuit/battery_rotated.png"), true);
         Texture bulbRotated = new Texture(Gdx.files.internal("circuit/bulby_rotated.png"), true);
         Texture resistorRotated = new Texture(Gdx.files.internal("circuit/resistor_rotated.png"), true);
+        Texture wireRotated = new Texture(Gdx.files.internal("circuit/wire_rotated.png"), true);
 
-        textures.addAll(inductorTexture, switchTexture, batteryTexture, bulbTexture, resistorTexture,
-                inductorRotated, switchRotated, batteryRotated, bulbRotated, resistorRotated);
+        textures.addAll(inductorTexture, switchTexture, batteryTexture, bulbTexture, resistorTexture, wireTexture,
+                inductorRotated, switchRotated, batteryRotated, bulbRotated, resistorRotated, wireRotated);
 
         Table t1 = new Table();
         t1.add(inductorValue).center().expandX();
@@ -232,6 +244,7 @@ public class CircuitBuilder extends SimulationType {
         table.add(batteryImage);
         table.add(bulbImage);
         table.add(resistorImage);
+        table.add(wireImage);
 
         table.row().padTop(10);
         table.add(inductorLabel);
@@ -239,11 +252,13 @@ public class CircuitBuilder extends SimulationType {
         table.add(batteryLabel);
         table.add(bulbLabel);
         table.add(resistorLabel);
+        table.add(wireLabel);
 
         //GRID
         Table grid = new Table();
-        grid.center().top().padTop(10);
+//        grid.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture("circuit/wire.png"))));
         grid.setFillParent(true);
+        grid.center().top().padTop(10);
         for (int i = 0; i < 5; i++) {
             grid.add();
             Button button = new Button(skin);
@@ -251,7 +266,6 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.app.log("CV","AC");
                     c.setActor(newActor(selectedTexture, c, false));
                 }
             });
@@ -263,7 +277,6 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.app.log("CV","AC");
                     c.setActor(newActor(selectedTexture, c, true));
                 }
             });
@@ -277,7 +290,6 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.app.log("CV","AC");
                     c.setActor(newActor(selectedTexture, c, false));
                 }
             });
@@ -289,7 +301,6 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.app.log("CV","AC");
                     c.setActor(newActor(selectedTexture, c, true));
                 }
             });
@@ -303,32 +314,74 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.app.log("CV","AC");
                     c.setActor(newActor(selectedTexture, c, false));
                 }
             });
         }
 
+        //GridDraw
+        //GRID
+        Table gridDraw = new Table();
+        gridDraw.setFillParent(true);
+        gridDraw.center().top().padTop(10);
+        for (int i = 0; i < 5; i++) {
+            Image image = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image).width(i==0?30:50).height(10).padTop(20).padLeft(i==0?20:0);
+            Image image2 = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image2).width(100).height(10).padTop(20);
+
+        }
+        Image image3 = new Image(new Texture("circuit/re.png"));
+        gridDraw.add(image3).width(30).height(10).padTop(20).padRight(20);
+        gridDraw.row();
+        for (int i = 0; i < 6; i++) {
+            Image image = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image).width(10).height(140).padLeft(20).padRight(20);
+            gridDraw.add();
+        }
+        gridDraw.row();
+        for (int i = 0; i < 5; i++) {
+            Image image = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image).width(i==0?30:50).height(10).padLeft(i==0?20:0);
+            Image image2 = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image2).width(100).height(10);
+        }
+        Image image4 = new Image(new Texture("circuit/re.png"));
+        gridDraw.add(image4).width(30).height(10).padRight(20);
+        gridDraw.row();
+        for (int i = 0; i < 6; i++) {
+            Image image = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image).width(10).height(140).padLeft(20).padRight(20);
+            gridDraw.add();
+        }
+        gridDraw.row();
+        for (int i = 0; i < 5; i++) {
+            Image image = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image).width(i==0?30:50).height(10).padLeft(i==0?20:0);
+            Image image2 = new Image(new Texture("circuit/re.png"));
+            gridDraw.add(image2).width(100).height(10);
+        }
+        Image image5 = new Image(new Texture("circuit/re.png"));
+        gridDraw.add(image5).width(30).height(10).padRight(20);
+
 //        stage.setDebugAll(true);
-        stage.addActor(table);
+        stage.addActor(gridDraw);
         stage.addActor(grid);
+        stage.addActor(table);
+        Gdx.app.log("CEVA", "a" + grid.getWidth() + " " + grid.getHeight());
 
         Gdx.input.setInputProcessor(stage);
     }
 
     Actor newActor(int index, final Cell c, final boolean rotated) {
-        Texture t = textures.get(rotated ? index+5 : index);
+        Texture t = textures.get(rotated ? index+6 : index);
         ImageButton actor = new ImageButton(new TextureRegionDrawable(new TextureRegion(t)),
                 new TextureRegionDrawable(new TextureRegion(t)), new TextureRegionDrawable(new TextureRegion(t)));
-        c.width(100).height(50);
 
-        if (rotated) {
+        c.width(100).height(50);
+        if (rotated)
             c.width(50).height(100);
-//            actor.setTransform(true);
-//            actor.setPosition(0,0);
-//            actor.setOrigin(100/2, 50/2);
-//            actor.rotateBy(90);
-        }
+
         actor.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -355,9 +408,9 @@ public class CircuitBuilder extends SimulationType {
         stage.act(delta);
         stage.draw();
 
-//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//        shapeRenderer.setColor(Color.BLACK);
-//        shapeRenderer.end();
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.end();
     }
 
     @Override
