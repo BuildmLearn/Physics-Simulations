@@ -24,7 +24,7 @@ public class HomeActivity extends NavigationActivity {
 //                startActivity(intent);
 //                finish();
                 Intent simIntent = new Intent(HomeActivity.this, SimulationLauncherActivity.class);
-                simIntent.putExtra(Constants.SIM_NAME, "Circuit Builder");
+                simIntent.putExtra(Constants.SIM_NAME, "Spring");
                 startActivity(simIntent);
             }
         });

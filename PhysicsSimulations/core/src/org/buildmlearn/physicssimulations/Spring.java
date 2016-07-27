@@ -1,200 +1,409 @@
 package org.buildmlearn.physicssimulations;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.MassData;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJoint;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.MouseJoint;
+import com.badlogic.gdx.physics.box2d.joints.MouseJointDef;
+import com.badlogic.gdx.physics.box2d.joints.PulleyJoint;
+import com.badlogic.gdx.physics.box2d.joints.PulleyJointDef;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-public class Spring extends SimulationType {
-    Object[] listEntries = {"This is a list entry1", "And another one1", "The meaning of life1", "Is hard to come by1",
-            "This is a list entry2", "And another one2", "The meaning of life2", "Is hard to come by2", "This is a list entry3",
-            "And another one3", "The meaning of life3", "Is hard to come by3", "This is a list entry4", "And another one4",
-            "The meaning of life4", "Is hard to come by4", "This is a list entry5", "And another one5", "The meaning of life5",
-            "Is hard to come by5"};
 
-    Skin skin;
-    Stage stage;
-    Texture texture1;
-    Texture texture2;
-    Label fpsLabel;
+public class Spring extends SimulationType implements InputProcessor {
+
+    private com.badlogic.gdx.graphics.OrthographicCamera camera;
+    private Box2DDebugRenderer debugRenderer;
+
+    private Skin skin;
+    private TextureAtlas atlas;
+
+    private Stage stage;
+    Stage stage2;
+    private Table table;
+
+    private BallActor block;
+    private BallActor pulley;
+    World b2world;
+
+    Label stiffnessValue;
+    Label massValue;
+
+    Slider stiffnessSlider;
+    Slider massSlider;
+    private Texture blockTexture;
+
+    PulleyJoint pulleyJoint;
+    DistanceJoint distanceJoint;
+
+    LineActor line1Actor, line2Actor, line3Actor, line4Actor;
+
+    ShapeRenderer shapeRenderer;
+    ShapeRenderer shapeRenderer2;
+
+    Label keValue, peeValue, pegravValue, totalValue;
+
+    Body body2;
+
+    float W;
+    float H;
+
+    public static final float RATE = 160f;
 
     @Override
-    public void create () {
+    public void create() {
+
+        // next we create the box2d debug renderer
+        debugRenderer = new Box2DDebugRenderer();
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer2 = new ShapeRenderer();
+
+        atlas = new TextureAtlas(Gdx.files.internal("data/ui-blue.atlas"));
+
         skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-        texture1 = new Texture(Gdx.files.internal("data/badlogicsmall.jpg"));
-        texture2 = new Texture(Gdx.files.internal("data/badlogic.jpg"));
-        TextureRegion image = new TextureRegion(texture1);
-        TextureRegion imageFlipped = new TextureRegion(image);
-        imageFlipped.flip(true, true);
-        TextureRegion image2 = new TextureRegion(texture2);
-        // stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false, new PolygonSpriteBatch());
+        skin.addRegions(atlas);
+
+        BitmapFont font = new BitmapFont(Gdx.files.internal("data/arial_30_bold.fnt"));
+        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.BLACK);
+
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
 
-        // Group.debug = true;
 
-        ImageButton.ImageButtonStyle style = new ImageButton.ImageButtonStyle(skin.get(Button.ButtonStyle.class));
-        style.imageUp = new TextureRegionDrawable(image);
-        style.imageDown = new TextureRegionDrawable(imageFlipped);
-        ImageButton iconButton = new ImageButton(style);
+        W = Gdx.graphics.getWidth();
+        H = Gdx.graphics.getHeight();
 
-        Button buttonMulti = new TextButton("Multi\nLine\nToggle", skin, "toggle");
-        Button imgButton = new Button(new Image(image), skin);
-        Button imgToggleButton = new Button(new Image(image), skin, "toggle");
+        Texture pulleyTexture = new Texture(Gdx.files.internal("pully.png"), true);
+        pulleyTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
+        final TextureRegion pulleyRegion = new TextureRegion(pulleyTexture);
+        pulley = new BallActor(pulleyRegion);
+        pulley.setPosition(W/4/RATE-pulley.getWidth()/2f, H/RATE-pulley.getHeight());
 
-        Label myLabel = new Label("this is some text.", skin);
-        myLabel.setWrap(true);
+        blockTexture = new Texture(Gdx.files.internal("blue_block.png"), true);
+        blockTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
+        final TextureRegion blockRegion = new TextureRegion(blockTexture);
+        block = new BallActor(blockRegion);
+        block.scaleBy(3/2f);
+        block.setPosition(W/4/RATE - block.getWidth()/2f, H/RATE/2f);
 
-        Table t = new Table();
-        t.row();
-        t.add(myLabel);
+        this.world();
 
-        t.layout();
+        Label StiffnessLabel = new Label("Stiffness:", labelStyle);
+        final Label massLabel = new Label("Mass:", labelStyle);
 
-        final CheckBox checkBox = new CheckBox(" Continuous rendering", skin);
-        checkBox.setChecked(true);
-        final Slider slider = new Slider(0, 10, 1, false, skin);
-        slider.setAnimateDuration(0.3f);
-        TextField textfield = new TextField("", skin);
-        textfield.setMessageText("Click here!");
-        textfield.setAlignment(Align.center);
-        final SelectBox selectBox = new SelectBox(skin);
-        selectBox.addListener(new ChangeListener() {
+//        Label keLabel = new Label("KE:", labelStyle);
+//        Label peelasLabel = new Label("PEelas", labelStyle);
+//        Label pegravLabel = new Label("PEgrav", labelStyle);
+//        Label totalLabel = new Label("Total", labelStyle);
+
+        stiffnessValue = new Label("0.3 N/m", skin);
+        massValue = new Label("1.0 kg", skin);
+
+        keValue = new Label("0.3 J", labelStyle);
+        peeValue = new Label("1.0 J", labelStyle);
+        pegravValue = new Label("0.5 J", labelStyle);
+        totalValue = new Label("1.8 J", labelStyle);
+
+        SliderStyle sliderStyle = new SliderStyle();
+        sliderStyle.knob = skin.getDrawable("knob_03")  ;
+        sliderStyle.background = skin.getDrawable("slider_back_hor");
+
+        stiffnessSlider = new Slider(0.1f, 1.0f, 0.1f, false, sliderStyle);
+        stiffnessSlider.setAnimateDuration(0);
+        stiffnessSlider.setValue(0.3f);
+        stiffnessSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                System.out.println(selectBox.getSelected());
-            }
-        });
-        selectBox.setItems("Android1", "Windows1 long text in item", "Linux1", "OSX1", "Android2", "Windows2", "Linux2", "OSX2",
-                "Android3", "Windows3", "Linux3", "OSX3", "Android4", "Windows4", "Linux4", "OSX4", "Android5", "Windows5", "Linux5",
-                "OSX5", "Android6", "Windows6", "Linux6", "OSX6", "Android7", "Windows7", "Linux7", "OSX7");
-        selectBox.setSelected("Linux6");
-        Image imageActor = new Image(image2);
-        ScrollPane scrollPane = new ScrollPane(imageActor);
-        List list = new List(skin);
-        list.setItems(listEntries);
-        list.getSelection().setMultiple(true);
-        list.getSelection().setRequired(false);
-        // list.getSelection().setToggle(true);
-        ScrollPane scrollPane2 = new ScrollPane(list, skin);
-        scrollPane2.setFlickScroll(false);
-        SplitPane splitPane = new SplitPane(scrollPane, scrollPane2, false, skin, "default-horizontal");
-        fpsLabel = new Label("fps:", skin);
-
-        // configures an example of a TextField in password mode.
-        final Label passwordLabel = new Label("Textfield in password mode: ", skin);
-        final TextField passwordTextField = new TextField("", skin);
-        passwordTextField.setMessageText("password");
-        passwordTextField.setPasswordCharacter('*');
-        passwordTextField.setPasswordMode(true);
-
-        buttonMulti.addListener(new TextTooltip("This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip! This is a tooltip!", skin));
-        Table tooltipTable = new Table(skin);
-        tooltipTable.pad(10).background("default-round");
-        tooltipTable.add(new TextButton("Fancy tooltip!", skin));
-        imgButton.addListener(new Tooltip(tooltipTable));
-
-        // window.debug();
-        Window window = new Window("Dialog", skin);
-        window.getTitleTable().add(new TextButton("X", skin)).height(window.getPadTop());
-        window.setPosition(0, 0);
-        window.defaults().spaceBottom(10);
-        window.row().fill().expandX();
-        window.add(iconButton);
-        window.add(buttonMulti);
-        window.add(imgButton);
-        window.add(imgToggleButton);
-        window.row();
-        window.add(checkBox);
-        window.add(slider).minWidth(100).fillX().colspan(3);
-        window.row();
-        window.add(selectBox).maxWidth(100);
-        window.add(textfield).minWidth(100).expandX().fillX().colspan(3);
-        window.row();
-        window.add(splitPane).fill().expand().colspan(4).maxHeight(200);
-        window.row();
-        window.add(passwordLabel).colspan(2);
-        window.add(passwordTextField).minWidth(100).expandX().fillX().colspan(2);
-        window.row();
-        window.add(fpsLabel).colspan(4);
-        window.pack();
-
-        // stage.addActor(new Button("Behind Window", skin));
-        stage.addActor(window);
-
-        textfield.setTextFieldListener(new TextField.TextFieldListener() {
-            public void keyTyped (TextField textField, char key) {
-                if (key == '\n') textField.getOnscreenKeyboard().show(false);
+                stiffnessValue.setText(stiffnessSlider.getValue() + " N/m");
             }
         });
 
-        slider.addListener(new ChangeListener() {
+        massSlider = new Slider(1, 4, 1, false, sliderStyle);
+        massSlider.setAnimateDuration(0);
+        massSlider.setValue(2);
+        massSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                Gdx.app.log("UITest", "slider: " + slider.getValue());
+                massValue.setText(massSlider.getValue() + " kg");
+                block.scaleBy(massSlider.getValue() / 2f);
+
+                MassData massData = block.body.getMassData();
+                float scaleFactor = massSlider.getValue() / massData.mass;
+                massData.mass *= scaleFactor;
+                massData.I *= scaleFactor;
+                block.body.setMassData(massData);
+                block.body.setAwake(true);
             }
         });
 
-        iconButton.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                new Dialog("Some Dialog", skin, "dialog") {
-                    protected void result (Object object) {
-                        System.out.println("Chosen: " + object);
-                    }
-                }.text("Are you enjoying this demo?").button("Yes", true).button("No", false).show(stage);
-            }
-        });
+        line1Actor = new LineActor(shapeRenderer);
+        line1Actor.setColor(Color.RED);
+        line2Actor = new LineActor(shapeRenderer);
+        line2Actor.setColor(Color.BLUE);
+        line3Actor = new LineActor(shapeRenderer);
+        line3Actor.setColor(Color.GREEN);
+        line4Actor = new LineActor(shapeRenderer);
+        line4Actor.setColor(Color.PURPLE);
+        LineActor line5Actor = new LineActor(shapeRenderer);
+        line5Actor.setColor(Color.BLACK);
 
-        checkBox.addListener(new ChangeListener() {
-            public void changed (ChangeEvent event, Actor actor) {
-                Gdx.graphics.setContinuousRendering(checkBox.isChecked());
-            }
-        });
+        table = new Table();
+        table.setDebug(false);
+        table.right().top().padRight(H/10).padTop(H/10);
+        table.setFillParent(true);
+
+        table.add(StiffnessLabel).padRight(10).align(Align.left);
+        table.add(stiffnessSlider).width(W / 4).colspan(2);
+        table.add(stiffnessValue).padLeft(10).align(Align.left);
+
+        table.row().padTop(30);
+        table.add(massLabel).padRight(10).align(Align.left);
+        table.add(massSlider).width(W / 4).colspan(2);
+        table.add(massValue).padLeft(10).align(Align.left);
+
+        table.row().padTop(30);
+        table.add(line1Actor).width(20).align(Align.center|Align.bottom).height(H/4f);
+        table.add(line2Actor).width(20).align(Align.center|Align.bottom).maxHeight(H/4f);
+        table.add(line3Actor).width(20).align(Align.center|Align.bottom).maxHeight(H/4f);
+        table.add(line4Actor).width(20).align(Align.center|Align.bottom).maxHeight(H/4f);
+
+        table.row();
+        table.add(line5Actor).height(10).colspan(4).fillX();
+
+        table.row().padTop(30);
+        table.add(new Label("KE", skin)).align(Align.center);
+        table.add(new Label("PEelas", skin)).align(Align.center);
+        table.add(new Label("PEgrav", skin)).align(Align.center);
+        table.add(new Label("Total", skin)).align(Align.center);
+
+
+//        stage.setDebugAll(true);
+        stage.addActor(table);
+
+        stage2 = new Stage(new FitViewport(W/RATE, H/RATE));
+        camera = (OrthographicCamera)stage2.getCamera();
+
+//        stage2.addActor(pulley);
+        stage2.addActor(block);
+
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(stage);
+        inputMultiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(inputMultiplexer);
+    }
+
+
+    void world() {
+        b2world = new World(new Vector2(0, -G), true);
+
+        //Blue
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.position.set(new Vector2(block.getX() + block.getWidth()/2f,
+                block.getY() + block.getHeight()/2f));
+        bodyDef.fixedRotation = true;
+        Body body = b2world.createBody(bodyDef);
+        body.setType(BodyDef.BodyType.DynamicBody);
+        block.body = body;
+
+        PolygonShape polygonShape = new PolygonShape();
+        float halfWidth = block.getWidth() / 2f;
+        float halfHeight = block.getHeight() / 2f;
+        polygonShape.setAsBox(halfWidth, halfHeight);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = polygonShape;
+        body.createFixture(fixtureDef);
+        polygonShape.dispose();
+        MassData m = body.getMassData();
+        m.mass = 1f;
+        body.setMassData(m);
+
+        //PIN POINT
+        BodyDef bodyDef2 = new BodyDef();
+        bodyDef2.position.set(new Vector2(W/4/RATE, H/RATE-0.2f));
+        body2 = b2world.createBody(bodyDef2);
+        body2.setType(BodyDef.BodyType.StaticBody);
+
+        PolygonShape polygonShape2 = new PolygonShape();
+        float halfWidth2 = 0.25f;
+        float halfHeight2 = 0.25f;
+        polygonShape2.setAsBox(halfWidth2, halfHeight2);
+
+        FixtureDef fixtureDef2 = new FixtureDef();
+        fixtureDef2.shape = polygonShape2;
+        body2.createFixture(fixtureDef2);
+        polygonShape2.dispose();
+
+        //JOINT
+        DistanceJointDef distanceJointDef= new DistanceJointDef();
+        distanceJointDef.bodyA = body2;
+        distanceJointDef.bodyB = body;
+        distanceJointDef.localAnchorA.set(0, 0);
+        distanceJointDef.localAnchorB.set(0, 0);
+        distanceJointDef.length = 2f;
+        distanceJointDef.frequencyHz = 0.5f;
+        distanceJointDef.dampingRatio = 0f;
+        distanceJointDef.collideConnected = false;
+        distanceJoint = (DistanceJoint) b2world.createJoint(distanceJointDef);
     }
 
     @Override
-    public void render () {
-        Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        fpsLabel.setText("fps: " + Gdx.graphics.getFramesPerSecond());
-
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        stage.draw();
-    }
-
-    @Override
-    public void resize (int width, int height) {
+    public void resize(int width, int height) {
+        stage2.getViewport().update(width, height, true);
         stage.getViewport().update(width, height, true);
+        this.table.setFillParent(true);
+        this.table.invalidate();
+    }
+
+    static final float G = 9.81f;
+
+    double KE, PEe, PEg, TME;
+
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        float delta = Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f);
+
+//        debugRenderer.render(b2world, camera.combined);
+//        stage.getBatch().setProjectionMatrix(camera.combined);
+
+        float op = block.body.getPosition().x - body2.getPosition().x;
+        float ad = body2.getPosition().y - block.body.getPosition().y;
+        float mass = massSlider.getValue() / 2f;
+        //double freq = Math.sqrt(G/length)/2*Math.PI;
+        TME = G * op * mass;
+        PEe = (float)(mass * G * op);
+        KE = TME - PEe;
+
+        float maxTME = 9.0f * G * 2.0f;
+        float r =  H / 4f / maxTME;
+        line1Actor.setHeight((float)KE*r);
+        line2Actor.setHeight((float)PEe*r);
+        line3Actor.setHeight((float)PEg*r);
+        line3Actor.setHeight((float)(KE+PEe+PEg)*r);
+
+        line1Actor.setHeight(20);
+        line2Actor.setHeight(30);
+        line3Actor.setHeight(30);
+        line4Actor.setHeight(40);
+
+
+        b2world.step(delta, 8, 3);
+
+        block.updateImage();
+
+        stage.act(delta);
+        stage.draw();
+
+        stage2.act(delta);
+        stage2.draw();
+
+        shapeRenderer2.setProjectionMatrix(camera.combined);
+        shapeRenderer2.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer2.setColor(Color.BLUE);
+        shapeRenderer2.circle(body2.getPosition().x, body2.getPosition().y, 0.05f, 360);
+//        shapeRenderer2.rectLine(new Vector2(pulley.getX()+pulley.getWidth()-0.01f, pulley.getY()+pulley.getHeight()/2f),
+//                new Vector2(block.getX() + block.getWidth()/2f-0.01f, block.getY()+ block.getHeight()), 0.02f);
+        shapeRenderer2.end();
+
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         stage.dispose();
         skin.dispose();
-        texture1.dispose();
-        texture2.dispose();
+        atlas.dispose();
+        blockTexture.dispose();
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    MouseJoint mouseJoint;
+
+    @Override
+    public boolean touchDown (int screenX, int screenY, int pointer, int newParam) {
+        Vector3 v = stage2.getCamera().unproject(new Vector3(screenX, screenY, 0));
+        if (block.getX() <= v.x && v.x <= block.getX()+ block.getWidth()) {
+            if (block.getY() <= v.y && v.y <= block.getY()+ block.getHeight()) {
+                MouseJointDef def = new MouseJointDef();
+                def.bodyA = body2;
+                def.bodyB = block.body;
+                def.collideConnected = true;
+                def.target.set(0, v.y);
+                def.maxForce = 100.0f * block.body.getMass();
+                mouseJoint = (MouseJoint) b2world.createJoint(def);
+                block.body.setAwake(true);
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged (int screenX, int screenY, int pointer) {
+        if (mouseJoint != null) {
+            Vector3 v = stage2.getCamera().unproject(new Vector3(screenX, screenY, 0));
+            mouseJoint.setTarget(new Vector2(0, v.y));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchUp (int x, int y, int pointer, int button) {
+        if (mouseJoint != null) {
+            b2world.destroyJoint(mouseJoint);
+            mouseJoint = null;
+            //block.body.setLinearVelocity(new Vector2(0,0));
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }

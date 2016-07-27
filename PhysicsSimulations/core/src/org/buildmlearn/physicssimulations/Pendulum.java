@@ -341,7 +341,6 @@ public class Pendulum extends SimulationType implements InputProcessor {
         ballTexture.dispose();
     }
 
-
     @Override
     public boolean keyDown(int keycode) {
         return false;

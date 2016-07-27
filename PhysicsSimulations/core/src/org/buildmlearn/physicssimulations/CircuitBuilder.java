@@ -121,19 +121,20 @@ public class CircuitBuilder extends SimulationType {
         });
 
         inductorTexture = new Texture(Gdx.files.internal("circuit/inductor.png"), true);
-//        inductorTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         Texture inductorPressed = new Texture(Gdx.files.internal("circuit/inductor_pressed.png"), true);
         final ImageButton inductorImage = new ImageButton(new TextureRegionDrawable(new TextureRegion(inductorTexture)),
                 new TextureRegionDrawable(new TextureRegion(inductorTexture)), new TextureRegionDrawable(new TextureRegion(inductorPressed)));
         inductorImage.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                selectedButton.setChecked(false);
+                if (inductorImage != selectedButton)
+                    selectedButton.setChecked(false);
                 selectedButton = inductorImage;
-                selectedTexture = 0;
+                selectedTexture = inductorImage.isChecked() ? 0 : -1;
             }
         });
         selectedButton = inductorImage;
+        inductorImage.setChecked(true);
         selectedTexture = 0;
 
         switchTexture = new Texture(Gdx.files.internal("circuit/switch_off.png"), true);
@@ -143,9 +144,11 @@ public class CircuitBuilder extends SimulationType {
         switchImage.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                selectedButton.setChecked(false);
+                if (switchImage != selectedButton)
+                    selectedButton.setChecked(false);
                 selectedButton = switchImage;
-                selectedTexture = 1;
+                selectedTexture = switchImage.isChecked() ? 1 : -1;
+
             }
         });
 
@@ -157,9 +160,10 @@ public class CircuitBuilder extends SimulationType {
         batteryImage.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                selectedButton.setChecked(false);
+                if (batteryImage != selectedButton)
+                    selectedButton.setChecked(false);
                 selectedButton = batteryImage;
-                selectedTexture = 2;
+                selectedTexture = batteryImage.isChecked() ? 3 : -1;
             }
         });
 
@@ -170,9 +174,11 @@ public class CircuitBuilder extends SimulationType {
         bulbImage.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                selectedButton.setChecked(false);
+                if (bulbImage != selectedButton)
+                    selectedButton.setChecked(false);
                 selectedButton = bulbImage;
-                selectedTexture = 3;
+                selectedTexture = bulbImage.isChecked() ? 4 : -1;
+
             }
         });
 
@@ -183,9 +189,10 @@ public class CircuitBuilder extends SimulationType {
         resistorImage.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                selectedButton.setChecked(false);
+                if (resistorImage != selectedButton)
+                    selectedButton.setChecked(false);
                 selectedButton = resistorImage;
-                selectedTexture = 4;
+                selectedTexture = resistorImage.isChecked() ? 5 : -1;
             }
         });
 
@@ -196,9 +203,11 @@ public class CircuitBuilder extends SimulationType {
         wireImage.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                selectedButton.setChecked(false);
+                if (wireImage != selectedButton)
+                    selectedButton.setChecked(false);
                 selectedButton = wireImage;
-                selectedTexture = 5;
+                selectedTexture = wireImage.isChecked() ? 6 : -1;
+
             }
         });
 
@@ -208,9 +217,11 @@ public class CircuitBuilder extends SimulationType {
         Texture bulbRotated = new Texture(Gdx.files.internal("circuit/bulby_rotated.png"), true);
         Texture resistorRotated = new Texture(Gdx.files.internal("circuit/resistor_rotated.png"), true);
         Texture wireRotated = new Texture(Gdx.files.internal("circuit/wire_rotated.png"), true);
+        Texture switchOn = new Texture(Gdx.files.internal("circuit/switch_on.png"), true);
+        Texture switchOnRotated = new Texture(Gdx.files.internal("circuit/switch_on_rotated.png"), true);
 
-        textures.addAll(inductorTexture, switchTexture, batteryTexture, bulbTexture, resistorTexture, wireTexture,
-                inductorRotated, switchRotated, batteryRotated, bulbRotated, resistorRotated, wireRotated);
+        textures.addAll(inductorTexture, switchTexture, switchOn, batteryTexture, bulbTexture, resistorTexture, wireTexture,
+                inductorRotated, switchRotated, switchOnRotated, batteryRotated, bulbRotated, resistorRotated, wireRotated);
 
         Table t1 = new Table();
         t1.add(inductorValue).center().expandX();
@@ -266,7 +277,8 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    c.setActor(newActor(selectedTexture, c, false));
+                    if (selectedTexture != -1)
+                        c.setActor(newActor(selectedTexture, c, false));
                 }
             });
         }
@@ -277,7 +289,8 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    c.setActor(newActor(selectedTexture, c, true));
+                    if (selectedTexture != -1)
+                        c.setActor(newActor(selectedTexture, c, true));
                 }
             });
             grid.add();
@@ -290,7 +303,8 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    c.setActor(newActor(selectedTexture, c, false));
+                    if (selectedTexture != -1)
+                        c.setActor(newActor(selectedTexture, c, false));
                 }
             });
         }
@@ -301,7 +315,8 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    c.setActor(newActor(selectedTexture, c, true));
+                    if (selectedTexture != -1)
+                        c.setActor(newActor(selectedTexture, c, true));
                 }
             });
             grid.add();
@@ -314,13 +329,13 @@ public class CircuitBuilder extends SimulationType {
             button.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    c.setActor(newActor(selectedTexture, c, false));
+                    if (selectedTexture != -1)
+                        c.setActor(newActor(selectedTexture, c, false));
                 }
             });
         }
 
         //GridDraw
-        //GRID
         Table gridDraw = new Table();
         gridDraw.setFillParent(true);
         gridDraw.center().top().padTop(10);
@@ -368,15 +383,20 @@ public class CircuitBuilder extends SimulationType {
         stage.addActor(gridDraw);
         stage.addActor(grid);
         stage.addActor(table);
-        Gdx.app.log("CEVA", "a" + grid.getWidth() + " " + grid.getHeight());
 
         Gdx.input.setInputProcessor(stage);
     }
 
     Actor newActor(int index, final Cell c, final boolean rotated) {
-        Texture t = textures.get(rotated ? index+6 : index);
-        ImageButton actor = new ImageButton(new TextureRegionDrawable(new TextureRegion(t)),
-                new TextureRegionDrawable(new TextureRegion(t)), new TextureRegionDrawable(new TextureRegion(t)));
+        index += rotated ? 7 : 0;
+        Texture t = textures.get(index);
+        ImageButton actor;
+        if (index != 1 && index != 8)
+            actor = new ImageButton(new TextureRegionDrawable(new TextureRegion(t)),
+                    new TextureRegionDrawable(new TextureRegion(t)), new TextureRegionDrawable(new TextureRegion(t)));
+        else
+            actor = new ImageButton(new TextureRegionDrawable(new TextureRegion(t)),
+                    new TextureRegionDrawable(new TextureRegion(t)), new TextureRegionDrawable(new TextureRegion(textures.get(index+1))));
 
         c.width(100).height(50);
         if (rotated)
@@ -385,7 +405,8 @@ public class CircuitBuilder extends SimulationType {
         actor.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                c.setActor(newActor(selectedTexture, c, rotated));
+                if (selectedTexture != -1)
+                    c.setActor(newActor(selectedTexture, c, rotated));
             }
         });
         return actor;

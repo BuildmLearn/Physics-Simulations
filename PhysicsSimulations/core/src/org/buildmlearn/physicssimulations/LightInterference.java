@@ -175,14 +175,14 @@ public class LightInterference extends SimulationType {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        float startPoint = W-200-distanceSlider.getValue()*40;
+        float startPoint = W-450-distanceSlider.getValue()*40;
 
         shapeRenderer.setColor(Color.GRAY);
-        shapeRenderer.rectLine(W/4, H/3, W/4, H-30, 20);
+        shapeRenderer.rectLine(W/5, H/3, W/5, H-30, 20);
         shapeRenderer.rectLine(startPoint, H/3, startPoint, H-30, 20);
 
         shapeRenderer.setColor(Color.WHITE);
-        shapeRenderer.rectLine(W/4, middle-2.5f, W/4, middle+2.5f, 20);
+        shapeRenderer.rectLine(W/5, middle-2.5f, W/5, middle+2.5f, 20);
         float dis = 50 * separationSlider.getValue();
         shapeRenderer.rectLine(startPoint, middle+dis, startPoint, middle+dis+5, 20);
         shapeRenderer.rectLine(startPoint, middle-dis, startPoint, middle-dis-5, 20);
@@ -209,13 +209,13 @@ public class LightInterference extends SimulationType {
         //rays
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(color);
-        //shapeRenderer.circle(W/4+40, middle, 30);
         for (int j = 0; j <= 40; j+=10) {
-            arc(W / 4+3*j, middle, 80+j, 360 - (40+j)/2, 40+j);
-//            arc(W / 4 + 30, middle, 90, 335, 50);
-//            arc(W / 4 + 60, middle, 100, 330, 60);
-//            arc(W / 4 + 90, middle, 110, 325, 70);
-//            arc(W / 4 + 120, middle, 120, 320, 80);
+            arc(W / 5+3*j, middle, 80+j, 360 - (40+j)/2, 40+j);
+        }
+
+        for (int j = 0; j <= 40; j+=10) {
+            arc(startPoint+3*j, middle+dis, 80+j, 360 - (40+j)/2, 40+j);
+            arc(startPoint+3*j, middle-dis, 80+j, 360 - (40+j)/2, 40+j);
         }
 
         shapeRenderer.end();
