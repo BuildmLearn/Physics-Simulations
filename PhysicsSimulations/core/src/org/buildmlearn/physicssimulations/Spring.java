@@ -28,6 +28,7 @@ import com.badlogic.gdx.physics.box2d.joints.PulleyJoint;
 import com.badlogic.gdx.physics.box2d.joints.PulleyJointDef;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -37,6 +38,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import java.util.Locale;
 
 
 public class Spring extends SimulationType implements InputProcessor {
@@ -52,7 +55,7 @@ public class Spring extends SimulationType implements InputProcessor {
     private Table table;
 
     private BallActor block;
-    private BallActor pulley;
+    private Image spring;
     World b2world;
 
     Label stiffnessValue;
@@ -62,7 +65,6 @@ public class Spring extends SimulationType implements InputProcessor {
     Slider massSlider;
     private Texture blockTexture;
 
-    PulleyJoint pulleyJoint;
     DistanceJoint distanceJoint;
 
     LineActor line1Actor, line2Actor, line3Actor, line4Actor;
@@ -101,11 +103,12 @@ public class Spring extends SimulationType implements InputProcessor {
         W = Gdx.graphics.getWidth();
         H = Gdx.graphics.getHeight();
 
-        Texture pulleyTexture = new Texture(Gdx.files.internal("pully.png"), true);
+        Texture pulleyTexture = new Texture(Gdx.files.internal("spring.png"), true);
         pulleyTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         final TextureRegion pulleyRegion = new TextureRegion(pulleyTexture);
-        pulley = new BallActor(pulleyRegion);
-        pulley.setPosition(W/4/RATE-pulley.getWidth()/2f, H/RATE-pulley.getHeight());
+        spring = new Image(pulleyRegion);
+        spring.setSize(spring.getWidth()/RATE, spring.getHeight()/RATE);
+        spring.setPosition(W/4/RATE-spring.getWidth()/2f, H/RATE-spring.getHeight());
 
         blockTexture = new Texture(Gdx.files.internal("blue_block.png"), true);
         blockTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
@@ -118,11 +121,6 @@ public class Spring extends SimulationType implements InputProcessor {
 
         Label StiffnessLabel = new Label("Stiffness:", labelStyle);
         final Label massLabel = new Label("Mass:", labelStyle);
-
-//        Label keLabel = new Label("KE:", labelStyle);
-//        Label peelasLabel = new Label("PEelas", labelStyle);
-//        Label pegravLabel = new Label("PEgrav", labelStyle);
-//        Label totalLabel = new Label("Total", labelStyle);
 
         stiffnessValue = new Label("0.3 N/m", skin);
         massValue = new Label("1.0 kg", skin);
@@ -141,7 +139,7 @@ public class Spring extends SimulationType implements InputProcessor {
         stiffnessSlider.setValue(0.3f);
         stiffnessSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
-                stiffnessValue.setText(stiffnessSlider.getValue() + " N/m");
+                stiffnessValue.setText(String.format(Locale.US, "%.1f N/m" , stiffnessSlider.getValue()));
             }
         });
 
@@ -209,7 +207,7 @@ public class Spring extends SimulationType implements InputProcessor {
         stage2 = new Stage(new FitViewport(W/RATE, H/RATE));
         camera = (OrthographicCamera)stage2.getCamera();
 
-//        stage2.addActor(pulley);
+        stage2.addActor(spring);
         stage2.addActor(block);
 
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -251,8 +249,8 @@ public class Spring extends SimulationType implements InputProcessor {
         body2.setType(BodyDef.BodyType.StaticBody);
 
         PolygonShape polygonShape2 = new PolygonShape();
-        float halfWidth2 = 0.25f;
-        float halfHeight2 = 0.25f;
+        float halfWidth2 = 0.1f;
+        float halfHeight2 = 0.1f;
         polygonShape2.setAsBox(halfWidth2, halfHeight2);
 
         FixtureDef fixtureDef2 = new FixtureDef();
@@ -269,7 +267,7 @@ public class Spring extends SimulationType implements InputProcessor {
         distanceJointDef.length = 2f;
         distanceJointDef.frequencyHz = 0.5f;
         distanceJointDef.dampingRatio = 0f;
-        distanceJointDef.collideConnected = false;
+        distanceJointDef.collideConnected = true;
         distanceJoint = (DistanceJoint) b2world.createJoint(distanceJointDef);
     }
 
@@ -294,30 +292,26 @@ public class Spring extends SimulationType implements InputProcessor {
 //        debugRenderer.render(b2world, camera.combined);
 //        stage.getBatch().setProjectionMatrix(camera.combined);
 
-        float op = block.body.getPosition().x - body2.getPosition().x;
-        float ad = body2.getPosition().y - block.body.getPosition().y;
-        float mass = massSlider.getValue() / 2f;
-        //double freq = Math.sqrt(G/length)/2*Math.PI;
-        TME = G * op * mass;
-        PEe = (float)(mass * G * op);
-        KE = TME - PEe;
+        block.updateImage();
+        spring.setHeight(H/RATE-(block.getY()+block.getHeight()));
+        spring.setY(block.getY()+block.getHeight());
 
+        float x = body2.getPosition().y - block.body.getPosition().y - 2f;
+        float mass = massSlider.getValue();
+        float k = stiffnessSlider.getValue();
+
+        KE = Math.abs(block.body.getLinearVelocity().y) * mass * 5;
+        PEe = 0.5 * k * x*x * 100;
+        PEg = G * mass * (block.body.getPosition().y < 0 ? 0 : block.body.getPosition().y);
+        TME = KE+PEe+PEg;
         float maxTME = 9.0f * G * 2.0f;
         float r =  H / 4f / maxTME;
         line1Actor.setHeight((float)KE*r);
         line2Actor.setHeight((float)PEe*r);
         line3Actor.setHeight((float)PEg*r);
-        line3Actor.setHeight((float)(KE+PEe+PEg)*r);
-
-        line1Actor.setHeight(20);
-        line2Actor.setHeight(30);
-        line3Actor.setHeight(30);
-        line4Actor.setHeight(40);
-
+        line4Actor.setHeight((float)(TME)*r);
 
         b2world.step(delta, 8, 3);
-
-        block.updateImage();
 
         stage.act(delta);
         stage.draw();
@@ -325,10 +319,11 @@ public class Spring extends SimulationType implements InputProcessor {
         stage2.act(delta);
         stage2.draw();
 
+
         shapeRenderer2.setProjectionMatrix(camera.combined);
         shapeRenderer2.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer2.setColor(Color.BLUE);
-        shapeRenderer2.circle(body2.getPosition().x, body2.getPosition().y, 0.05f, 360);
+//        shapeRenderer2.circle(body2.getPosition().x, body2.getPosition().y, 0.05f, 360);
 //        shapeRenderer2.rectLine(new Vector2(pulley.getX()+pulley.getWidth()-0.01f, pulley.getY()+pulley.getHeight()/2f),
 //                new Vector2(block.getX() + block.getWidth()/2f-0.01f, block.getY()+ block.getHeight()), 0.02f);
         shapeRenderer2.end();

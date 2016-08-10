@@ -20,12 +20,12 @@ public class HomeActivity extends NavigationActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
-//                startActivity(intent);
-//                finish();
-                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncherActivity.class);
-                simIntent.putExtra(Constants.SIM_NAME, "Spring");
-                startActivity(simIntent);
+                Intent intent = new Intent(HomeActivity.this, SimulationsActivity.class);
+                startActivity(intent);
+                finish();
+//                Intent simIntent = new Intent(HomeActivity.this, SimulationLauncherActivity.class);
+//                simIntent.putExtra(Constants.SIM_NAME, "Projectile");
+//                startActivity(simIntent);
             }
         });
 

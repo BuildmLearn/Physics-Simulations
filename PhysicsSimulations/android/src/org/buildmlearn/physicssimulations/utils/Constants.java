@@ -22,6 +22,10 @@ import java.util.List;
 public class Constants {
     public static final List<Simulation> SIMULATION_LIST = new ArrayList<Simulation>(){
         {
+            add(new Simulation("Projectile",
+                    "Simulation Details"));
+            add(new Simulation("Collision",
+                    "Simulation Details"));
             add(new Simulation("Spring","" +
                     "Simulation Details"));
             add(new Simulation("Circuit Builder",
@@ -36,11 +40,7 @@ public class Constants {
                     "Simulation Details"));
             add(new Simulation("Wave",
                     "Simulation Details"));
-            add(new Simulation("Collision",
-                    "Simulation Details"));
             add(new Simulation("Lens",
-                    "Simulation Details"));
-            add(new Simulation("Projectile",
                     "Simulation Details"));
         }
     };
