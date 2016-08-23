@@ -7,8 +7,6 @@ import android.widget.Button;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import org.buildmlearn.physicssimulations.utils.Constants;
-
 public class HomeActivity extends NavigationActivity {
 
     @Override

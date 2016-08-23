@@ -38,7 +38,9 @@ import java.util.Locale;
 import javax.sound.sampled.Line;
 import javax.xml.soap.Text;
 
-
+/**
+ * @author Costin Giorgian
+ */
 public class CircuitBuilder extends SimulationType {
 
     private Skin skin;

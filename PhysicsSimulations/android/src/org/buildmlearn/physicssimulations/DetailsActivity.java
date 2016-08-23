@@ -7,12 +7,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.View;
-import android.widget.TextView;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
-import org.w3c.dom.Text;
 
 import io.github.kexanie.library.MathView;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;

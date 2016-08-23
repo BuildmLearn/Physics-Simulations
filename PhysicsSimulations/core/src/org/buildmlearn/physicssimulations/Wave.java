@@ -145,10 +145,8 @@ public class Wave extends SimulationType {
         table.add(amplitudeSlider).padLeft(20).width(W/4);
         table.add(amplitudeValue).padLeft(20).align(Align.left);
 
-
         stage.addActor(table);
         Gdx.input.setInputProcessor(stage);
-
 
         init(0);
     }

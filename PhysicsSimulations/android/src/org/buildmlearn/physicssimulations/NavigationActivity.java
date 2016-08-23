@@ -14,9 +14,6 @@ import android.view.MenuItem;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
-import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
-
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 

@@ -2,15 +2,11 @@ package org.buildmlearn.physicssimulations;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +14,7 @@ import android.view.ViewGroup;
 import org.buildmlearn.physicssimulations.utils.Constants;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
-import uk.co.deanwild.materialshowcaseview.PrefsManager;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
-import uk.co.deanwild.materialshowcaseview.shape.Shape;
-import uk.co.deanwild.materialshowcaseview.target.Target;
-import uk.co.deanwild.materialshowcaseview.target.ViewTarget;
 
 public class SimulationsFragment extends Fragment {
 

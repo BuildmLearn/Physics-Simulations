@@ -1,6 +1,5 @@
 package org.buildmlearn.physicssimulations;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +12,6 @@ import org.buildmlearn.physicssimulations.SimulationsFragment.OnSimulationListen
 import org.buildmlearn.physicssimulations.utils.Constants;
 
 import java.util.List;
-
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
-import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<SimulationsRecyclerViewAdapter.ViewHolder> {
 
