@@ -33,6 +33,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -61,6 +62,8 @@ public class Projectile extends SimulationType {
 
     private Label speedValue;
     private Label massValue;
+    private Label angleValue;
+    private Label rangeValue;
 
     private Slider speedSlider;
     private Slider massSlider;
@@ -111,6 +114,7 @@ public class Projectile extends SimulationType {
                     cannon.rotateBy(2);
                 else if (y <= 0 && cannon.getRotation() > 0)
                     cannon.rotateBy(-2);
+                angleValue.setText(String.format(Locale.US, "%.0f °" , cannon.getRotation()));
             }
         });
 
@@ -143,6 +147,8 @@ public class Projectile extends SimulationType {
                     ball.setPosition(v.x, v.y);
                     ball.updateBody();
                     ball.body.setLinearVelocity(MathUtils.cosDeg(rot) * speed, MathUtils.sinDeg(rot) * speed);
+//                    ball.body.applyForceToCenter(new Vector2(RATE*MathUtils.cosDeg(rot) * speed, RATE*MathUtils.sinDeg(rot) * speed), true);
+//                    ball.body.applyLinearImpulse(new Vector2(MathUtils.cosDeg(rot) * speed, MathUtils.sinDeg(rot) * speed), ball.body.getWorldCenter(), true);
                 }
             }
         });
@@ -158,14 +164,20 @@ public class Projectile extends SimulationType {
                 ball.setPosition(-1, 0);
                 ball.updateBody();
                 camera.position.set(W/RATE/2f, camera.position.y, 0);
+                cannon.setPosition(cannon.getWidth(), H/3f);
+                rangeValue.setText(String.format(Locale.US, "%.1f m" , 0f));
             }
         });
 
         Label speedLabel = new Label("Speed", labelStyle);
         Label massLabel = new Label("Mass", labelStyle);
+        Label angleLabel = new Label("Angle:", labelStyle);
+        Label rangeLabel = new Label("Range:", labelStyle);
 
         speedValue = new Label("2.5 m/s", skin);
         massValue = new Label("10 kg", skin);
+        angleValue = new Label("30 °", skin);
+        rangeValue = new Label("0.0 m", skin);
 
         Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
         sliderStyle.knob = skin.getDrawable("knob_03");
@@ -204,11 +216,15 @@ public class Projectile extends SimulationType {
         table.add(speedLabel).padRight(20);
         table.add(speedSlider).width(W/5);
         table.add(speedValue).padLeft(20).padRight(20).center();
+        table.add(angleLabel).padLeft(40).align(Align.left);
+        table.add(angleValue).padLeft(20);
 
         table.row().padTop(5);
         table.add(massLabel).padRight(20);
         table.add(massSlider).width(W/5);
         table.add(massValue).padLeft(20).padRight(20).center();
+        table.add(rangeLabel).padLeft(40).align(Align.left);
+        table.add(rangeValue).padLeft(20);
 
         Table buttonsTable = new Table();
         buttonsTable.setDebug(false);
@@ -300,9 +316,13 @@ public class Projectile extends SimulationType {
         if (playButton.isChecked()) {
             b2world.step(delta, 8, 3);
             ball.updateImage();
+            rangeValue.setText(String.format(Locale.US, "%.1f m" , ball.getX()-v.x));
         }
 
         if (ball.getX() > W/RATE/2f) {
+            if (camera.position.x != ball.getX()) {
+                cannon.moveBy(-(ball.getX()-camera.position.x)*RATE, 0);
+            }
             camera.position.set(ball.getX(), camera.position.y, 0);
             camera.update();
         }

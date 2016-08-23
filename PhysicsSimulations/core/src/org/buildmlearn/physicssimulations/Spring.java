@@ -99,7 +99,6 @@ public class Spring extends SimulationType implements InputProcessor {
 
         stage = new Stage(new ScreenViewport());
 
-
         W = Gdx.graphics.getWidth();
         H = Gdx.graphics.getHeight();
 
@@ -122,7 +121,7 @@ public class Spring extends SimulationType implements InputProcessor {
         Label StiffnessLabel = new Label("Stiffness:", labelStyle);
         final Label massLabel = new Label("Mass:", labelStyle);
 
-        stiffnessValue = new Label("0.3 N/m", skin);
+        stiffnessValue = new Label("0.5 N/m", skin);
         massValue = new Label("1.0 kg", skin);
 
         keValue = new Label("0.3 J", labelStyle);
@@ -134,12 +133,13 @@ public class Spring extends SimulationType implements InputProcessor {
         sliderStyle.knob = skin.getDrawable("knob_03")  ;
         sliderStyle.background = skin.getDrawable("slider_back_hor");
 
-        stiffnessSlider = new Slider(0.1f, 1.0f, 0.1f, false, sliderStyle);
+        stiffnessSlider = new Slider(0.4f, 1.0f, 0.1f, false, sliderStyle);
         stiffnessSlider.setAnimateDuration(0);
-        stiffnessSlider.setValue(0.3f);
+        stiffnessSlider.setValue(0.5f);
         stiffnessSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 stiffnessValue.setText(String.format(Locale.US, "%.1f N/m" , stiffnessSlider.getValue()));
+                distanceJoint.setFrequency(stiffnessSlider.getValue());
             }
         });
 

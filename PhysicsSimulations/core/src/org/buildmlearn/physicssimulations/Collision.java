@@ -123,7 +123,7 @@ public class Collision extends SimulationType {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 leftCar.body.setLinearVelocity(speedLeftSlider.getValue(),0);
-                rightCar.body.setLinearVelocity(-speedRightSlider.getValue(),0);
+                rightCar.body.setLinearVelocity(speedRightSlider.getValue(),0);
             }
         });
 
@@ -139,6 +139,10 @@ public class Collision extends SimulationType {
                 rightCar.setPosition(W/RATE - rightCar.getWidth(), 2f);
                 rightCar.updateBody();
                 playButton.setChecked(false);
+                String text = String.format(Locale.US, "%.1f m/s" , speedLeftSlider.getValue());
+                speedLeftValue.setText(text);
+                text = String.format(Locale.US, "%.1f m/s" , speedRightSlider.getValue());
+                speedRightValue.setText(text);
             }
         });
 
@@ -187,7 +191,7 @@ public class Collision extends SimulationType {
         Label massLabel = new Label("Mass", labelStyle);
 
         speedLeftValue = new Label("2.5 m/s", skin);
-        speedRightValue = new Label("3.4 m/s", skin);
+        speedRightValue = new Label("-3.4 m/s", skin);
         massLeftValue = new Label("50 kg", skin);
         massRightValue = new Label("150 kg", skin);
 
@@ -236,8 +240,8 @@ public class Collision extends SimulationType {
             }
         });
 
-        speedRightSlider = new Slider(0f, 15, 0.1f, false, sliderStyle);
-        speedRightSlider.setValue(3.4f);
+        speedRightSlider = new Slider(-15f, 0f, 0.1f, false, sliderStyle);
+        speedRightSlider.setValue(-3.4f);
         speedRightSlider.addListener(new ChangeListener() {
             public void changed (ChangeEvent event, Actor actor) {
                 String text = String.format(Locale.US, "%.1f m/s" , speedRightSlider.getValue());
@@ -338,7 +342,7 @@ public class Collision extends SimulationType {
         polygonShape2.dispose();
         m = body2.getMassData();
         m.mass = 50f;
-        body.setMassData(m);
+        body2.setMassData(m);
     }
 
     @Override
@@ -361,6 +365,10 @@ public class Collision extends SimulationType {
             b2world.step(delta, 8, 3);
             leftCar.updateImage();
             rightCar.updateImage();
+            String text = String.format(Locale.US, "%.1f m/s" , leftCar.body.getLinearVelocity().x);
+            speedLeftValue.setText(text);
+            text = String.format(Locale.US, "%.1f m/s" , rightCar.body.getLinearVelocity().x);
+            speedRightValue.setText(text);
         }
 
         stage.act(delta);
