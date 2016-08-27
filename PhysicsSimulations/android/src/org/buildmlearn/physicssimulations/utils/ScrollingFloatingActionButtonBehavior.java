@@ -7,6 +7,10 @@ import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * The <code>ScrollingFloatingActionButtonBehavior</code> class used to hide the {@link FloatingActionButton} on scrolling
+ * @author  Costin Giorgian
+ */
 public class ScrollingFloatingActionButtonBehavior extends FloatingActionButton.Behavior {
 
     public ScrollingFloatingActionButtonBehavior(Context context, AttributeSet attrs) {

@@ -2,6 +2,10 @@ package org.buildmlearn.physicssimulations;
 
 import android.os.Bundle;
 
+/**
+ * About App screen
+ * @author  Costin Giorgian
+ */
 public class AboutActivity extends NavigationActivity {
 
     @Override

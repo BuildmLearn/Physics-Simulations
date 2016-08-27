@@ -17,6 +17,10 @@ import org.buildmlearn.physicssimulations.Wave;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The <code>Constants</code> class defines the constants values and some useful methods
+ * @author  Costin Giorgian
+ */
 public class Constants {
     public static final List<Simulation> SIMULATION_LIST = new ArrayList<Simulation>(){
         {
@@ -56,6 +60,11 @@ public class Constants {
     public static final String TUT_TEST     = "tut_test";
     public static final String TUT_DETAILS  = "tut_details";
 
+    /**
+     *
+     * @param name  The string name of the simulation
+     * @return      A new instance of the simulation given by name
+     */
     public static SimulationType getSim(String name) {
         if (name.equals("Atwood"))
             return new Atwood();
@@ -80,6 +89,11 @@ public class Constants {
         return null;
     }
 
+    /**
+     *
+     * @param name  The string name of the simulation
+     * @return      The id of the simulation given by name
+     */
     public static int getId(String name) {
         if (name.equals("Atwood"))
             return 0;
@@ -104,6 +118,11 @@ public class Constants {
         return 0;
     }
 
+    /**
+     *
+     * @param name  The string name of the simulation
+     * @return      The drawable resource of the icon for given simulation name
+     */
     public static int getIcon(String name) {
         if (name.equals("Atwood"))
             return R.drawable.pulley;

@@ -14,6 +14,10 @@ import android.view.MenuItem;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
+/**
+ * The <code>NavigationActivity</code> class manages the <a href="https://material.google.com/patterns/navigation-drawer.html">Navigation Drawer</a>
+ * @author  Costin Giorgian
+ */
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 

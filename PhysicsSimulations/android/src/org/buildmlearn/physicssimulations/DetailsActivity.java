@@ -15,6 +15,10 @@ import io.github.kexanie.library.MathView;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
+/**
+ * Details screen with information about a specific simulation
+ * @author  Costin Giorgian
+ */
 public class DetailsActivity extends AppCompatActivity {
 
     @Override

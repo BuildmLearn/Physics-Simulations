@@ -4,6 +4,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+/**
+ * The <code>LineActor</code> is an {@link Actor} that represent a line
+ * @author  Costin Giorgian
+ */
 public class LineActor extends Actor {
     ShapeRenderer shapeRenderer;
     LineActor(ShapeRenderer shapeRenderer) {

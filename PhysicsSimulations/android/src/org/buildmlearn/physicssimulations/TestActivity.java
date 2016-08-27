@@ -23,6 +23,10 @@ import java.util.Random;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
+/**
+ * Test screen with questions that test the user knowledge
+ * @author  Costin Giorgian
+ */
 public class TestActivity extends AppCompatActivity {
 
     Button answerButton;

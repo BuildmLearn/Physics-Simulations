@@ -32,6 +32,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Locale;
 
+/**
+ * The <code>Collision</code> class draws the screen for Collision Simulation
+ * @author  Costin Giorgian
+ */
 public class Collision extends SimulationType {
     private com.badlogic.gdx.graphics.OrthographicCamera camera;
     private Box2DDebugRenderer debugRenderer;

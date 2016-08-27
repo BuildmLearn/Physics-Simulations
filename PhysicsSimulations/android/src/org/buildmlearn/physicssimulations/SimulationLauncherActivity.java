@@ -9,6 +9,10 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
+/**
+ * The screen where simulation will be drawn
+ * @author  Costin Giorgian
+ */
 public class SimulationLauncherActivity extends AppCompatActivity implements AndroidFragmentApplication.Callbacks {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

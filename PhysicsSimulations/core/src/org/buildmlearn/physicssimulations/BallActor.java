@@ -7,6 +7,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
+/**
+ * The <code>BallActor</code> class extends Actor class by adding a {@link Body} object
+ * @author  Costin Giorgian
+ */
 public class BallActor extends Actor {
     float unscaledWidth;
     float unscaledHeight;
@@ -22,7 +26,10 @@ public class BallActor extends Actor {
         setRotation(ballImage.getRotation());
     }
 
-    void updateImage() {
+    /**
+     * Update the {@link  #ballImage} after {@link #body} act
+     */
+    public void updateImage() {
         setPosition(body.getPosition().x - getWidth()/2f,
                 body.getPosition().y - getHeight()/2f);
         setRotation(body.getAngle() * MathUtils.radiansToDegrees);
@@ -30,7 +37,10 @@ public class BallActor extends Actor {
 
     }
 
-    void updateBody() {
+    /**
+     * Update the {@link  #body} after {@link #ballImage} was changed
+     */
+    public void updateBody() {
         body.setTransform(ballImage.getX() + getWidth()/2f,
                 ballImage.getY() + getHeight()/2f,
                 ballImage.getRotation() * MathUtils.degreesToRadians);

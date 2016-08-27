@@ -39,6 +39,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Locale;
 
+/**
+ * The <code>Atwood</code> class draws the screen for Atwood Machine Simulation
+ * @author  Costin Giorgian
+ */
 public class Atwood extends SimulationType implements InputProcessor {
 
     private com.badlogic.gdx.graphics.OrthographicCamera camera;

@@ -2,6 +2,10 @@ package org.buildmlearn.physicssimulations;
 
 import android.os.Bundle;
 
+/**
+ * Settings screen
+ * @author  Costin Giorgian
+ */
 public class SettingsActivity extends NavigationActivity {
 
     @Override

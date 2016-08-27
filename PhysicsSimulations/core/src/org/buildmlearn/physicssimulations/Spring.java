@@ -39,7 +39,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Locale;
 
-
+/**
+ * The <code>Spring</code> class draws the screen for Spring Simulation
+ * @author  Costin Giorgian
+ */
 public class Spring extends SimulationType implements InputProcessor {
 
     private com.badlogic.gdx.graphics.OrthographicCamera camera;

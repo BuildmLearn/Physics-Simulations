@@ -5,6 +5,10 @@ import android.os.Bundle;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
+/**
+ * The screen with the simulations list
+ * @author  Costin Giorgian
+ */
 public class SimulationsActivity extends NavigationActivity
         implements SimulationsFragment.OnSimulationListener {
 

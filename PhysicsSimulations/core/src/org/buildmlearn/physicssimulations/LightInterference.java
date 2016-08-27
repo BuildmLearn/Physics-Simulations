@@ -24,6 +24,10 @@ import java.util.Locale;
 
 import box2dLight.RayHandler;
 
+/**
+ * The <code>LightInterference</code> class draws the screen for Light Interference Simulation
+ * @author  Costin Giorgian
+ */
 public class LightInterference extends SimulationType {
 
     private Skin skin;

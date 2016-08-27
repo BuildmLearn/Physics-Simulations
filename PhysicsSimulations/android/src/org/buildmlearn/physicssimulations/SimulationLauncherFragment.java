@@ -11,6 +11,10 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication;
 
 import org.buildmlearn.physicssimulations.utils.Constants;
 
+/**
+ * The <code>SimulationLauncherFragment</code> class opens a specific simulation
+ * @author  Costin Giorgian
+ */
 public class SimulationLauncherFragment extends AndroidFragmentApplication {
 
     public SimulationLauncherFragment() {}

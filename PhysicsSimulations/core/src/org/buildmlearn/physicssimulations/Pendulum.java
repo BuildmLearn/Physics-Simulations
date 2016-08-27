@@ -39,7 +39,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Locale;
 
-
+/**
+ * The <code>Pendulum</code> class draws the screen for Pendulum Simulation
+ * @author  Costin Giorgian
+ */
 public class Pendulum extends SimulationType implements InputProcessor {
 
     private com.badlogic.gdx.graphics.OrthographicCamera camera;

@@ -13,6 +13,10 @@ import org.buildmlearn.physicssimulations.utils.Constants;
 
 import java.util.List;
 
+/**
+ * The {@link android.support.v7.widget.RecyclerView.Adapter} that manages the simulations list
+ * @author  Costin Giorgian
+ */
 public class SimulationsRecyclerViewAdapter extends RecyclerView.Adapter<SimulationsRecyclerViewAdapter.ViewHolder> {
 
     private final List<Simulation> simulationList;

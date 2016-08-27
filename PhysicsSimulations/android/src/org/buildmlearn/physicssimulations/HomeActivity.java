@@ -7,6 +7,10 @@ import android.widget.Button;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 
+/**
+ * Home screen of the App
+ * @author  Costin Giorgian
+ */
 public class HomeActivity extends NavigationActivity {
 
     @Override

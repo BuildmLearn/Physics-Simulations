@@ -27,6 +27,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.Locale;
 
+/**
+ * The <code>LightRefraction</code> class draws the screen for Light Refraction Simulation
+ * @author  Costin Giorgian
+ */
 public class LightRefraction extends SimulationType{
 
 	private Skin skin;

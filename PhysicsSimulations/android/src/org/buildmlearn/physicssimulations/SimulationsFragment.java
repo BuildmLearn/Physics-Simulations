@@ -16,6 +16,10 @@ import org.buildmlearn.physicssimulations.utils.Constants;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
+/**
+ * The {@link Fragment} for the simulations list
+ * @author  Costin Giorgian
+ */
 public class SimulationsFragment extends Fragment {
 
     private OnSimulationListener simulationListener;

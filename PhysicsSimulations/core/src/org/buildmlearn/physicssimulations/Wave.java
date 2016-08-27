@@ -19,6 +19,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Locale;
 
+/**
+ * The <code>Wave</code> class draws the screen for Wave Simulation
+ * @author  Costin Giorgian
+ */
 public class Wave extends SimulationType {
 
     private Skin skin;

@@ -38,6 +38,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.Locale;
 
+/**
+ * The <code>Projectile</code> class draws the screen for Projectile Simulation
+ * @author  Costin Giorgian
+ */
 public class Projectile extends SimulationType {
     private com.badlogic.gdx.graphics.OrthographicCamera camera;
     private Box2DDebugRenderer debugRenderer;
